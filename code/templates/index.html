@@ -9,7 +9,7 @@
 <div class="section" id="vue-target" v-cloak>
 
   <div class="container block">
-    <h1 class="title">Postlandia</h1>
+    <h1 class="title">Bizzit</h1>
     <div class="container block">
         <!-- Return user name -->
       [[if email:]]
@@ -50,7 +50,7 @@
 
   <div class="container block">
     <table class="table is-striped is-fullwidth">
-      <div v-for="r in rows" class="box">
+      <div v-for="r in rows.slice().reverse()" class="box">
         <div class="content is-medium">
             <p>
               {{r.content}}
