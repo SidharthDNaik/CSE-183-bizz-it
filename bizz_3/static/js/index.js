@@ -99,7 +99,7 @@ let init = (app) => {
             if (like_type === 1) {
                 Vue.set(row, 'number_of_likes', row.number_of_likes - 1)
             } else if (like_type === 2) {
-                Vue.set(row, 'num_of_dislikes', row.number_of_dislikes - 1)
+                Vue.set(row, 'number_of_dislikes', row.number_of_dislikes - 1)
             }
         } else {
             if ((row.like_type === 1) & (like_type === 2)) {
@@ -117,7 +117,7 @@ let init = (app) => {
         console.log(row.number_of_dislikes);
         axios.post(set_likes_url, {post_id: row.id, 
                                    like_type: row.like_type, 
-                                   liker: user_name});
+                                   likee: user_name});
         app.enumerate(app.vue.rows);
     };
 
@@ -154,7 +154,7 @@ let init = (app) => {
         }).then(
             () => {
                 for(let row of app.vue.rows){
-                    axios.get(get_likes_url, {params: {"post_id": row.id, "liker": user_name}})
+                    axios.get(get_likes_url, {params: {"post_id": row.id, "likee": user_name}})
                     .then((result) => {
                         row.like_type = result.data.like_type;
                         if(row.like_type === 1){
@@ -169,7 +169,7 @@ let init = (app) => {
                     for(let row of app.vue.rows) {
                         axios.get(get_likes_stream_url, {params: {
                             "post_id": row.id,
-                            "liker": user_name,
+                            "likee": user_name,
                         }}).then((result) => {
                             row.number_of_likes += result.data.number_of_likes;
                             row.number_of_dislikes += result.data.number_of_dislikes;

@@ -51,7 +51,7 @@ db.define_table('posts',
 db.define_table('likes',
                 Field('post_id', 'reference posts'),
                 Field('like_type', 'integer', default=0),
-                Field('liker'),
+                Field('likee'),
 )
 
 db.commit()

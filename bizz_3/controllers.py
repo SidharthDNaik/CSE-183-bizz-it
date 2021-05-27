@@ -87,10 +87,10 @@ def delete_post():
 @action.uses(url_signer.verify(), db)
 def get_likes():
     post_id = request.params.get('post_id')
-    liker = request.params.get('liker')
+    likee = request.params.get('likee')
     row = db(
                 (db.likes.post_id == post_id) &
-                (db.likes.liker == liker)
+                (db.likes.likee == likee)
             ).select().first()
     like_type = row.like_type if row is not None else 0
     return dict(
@@ -102,19 +102,16 @@ def get_likes():
 def set_likes():
     post_id = request.json.get('post_id')
     like_type = request.json.get('like_type')
-    liker = request.json.get('liker')
+    likee = request.json.get('likee')
     assert post_id is not None and like_type is not None
-    print("This is like type : ", type(like_type))
-    print("This is db.likes.post_id : ", (db.likes.post_id))
-    print("This is post_id ", post_id)
     db.likes.update_or_insert(
         (
             (db.likes.post_id == post_id) &
-            (db.likes.liker == liker)
+            (db.likes.likee == likee)
         ),
-        post_id=post_id,
         like_type=like_type,
-        liker=liker,
+        likee=likee,
+        post_id=post_id,
     )
     return "yeet"
 
@@ -122,10 +119,10 @@ def set_likes():
 @action.uses(url_signer.verify(), db)
 def get_likes_stream():
     post_id = request.params.get('post_id')
-    liker = request.params.get('liker')
+    likee = request.params.get('likee')
     rows = db(
                 (db.likes.post_id == post_id) &
-                (db.likes.liker != liker)
+                (db.likes.likee != likee)
              ).select().as_list()
     number_of_likes = 0
     number_of_dislikes = 0
@@ -133,18 +130,19 @@ def get_likes_stream():
     string_of_dislikes = ""
     i = 0
     for r in rows:
-        print(len(rows)-1)
+        print("number of rows : ", len(rows))
+        print("index i : ", i)
         if(r['like_type'] == 1):
             if i != len(rows) - 1:
-                string_of_likes += r['liker'] + ", "
+                string_of_likes += r['likee'] + ", "
             else:
-                string_of_likes += r['liker']
+                string_of_likes += r['likee']
             number_of_likes += 1
         elif(r['like_type'] == 2):
             if i != len(rows) - 1:
-                string_of_dislikes += r['liker'] + ", "
+                string_of_dislikes += r['likee'] + ", "
             else:
-                string_of_dislikes += r['liker']
+                string_of_dislikes += r['likee']
             number_of_dislikes += 1
         i += 1
     return dict(
