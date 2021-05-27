@@ -61,12 +61,7 @@
               {{r.name}}
             </p>
           </div>
-          <button @click="thumbs_up(r.idx)" class="button is-grey-darker">
-            <i class="fa fa-thumbs-up"></i>
-          </button>
-          <button @click="thumbs_down(r.idx)" class="button is-black">
-            <i class="fa fa-thumbs-down"></i>
-          </button>
+
           <div style="float:right;">
             <div v-if="r.email === '[[=email]]'">
               <button @click="delete_post(r._idx)" class="button is-danger">
@@ -74,7 +69,38 @@
               </button>
             </div>
           </div>
+
+          <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
+
+            <span @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 1)">
+                <i class="fa fa-flip-horizontal" :class="{
+                    'fa-thumbs-o-up': !(r.likes === 1),
+                    'fa-thumbs-up': (r.likes === 1),
+                    }">
+                </i>
+            </span>
+            <span @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 2)">
+                <i class="fa" :class="{
+                    'fa-thumbs-o-down': !(r.likes === 2),
+                    'fa-thumbs-down': (r.likes === 2),
+                    }">
+                </i>
+            </span>
+
+            <span v-if="r.hover">
+                <br>
+                <span v-if="r.num_likes > 0">
+                    Liked by<span v-if="r.likes === 1"> [[=name]],</span> {{ r.like_cache }}
+                </span>
+                <br>
+                <span v-if="r.num_dislikes > 0">
+                    Disliked by<span v-if="r.likes === 2"> [[=name]],</span> {{ r.dislike_cache }}
+                </span>
+            </span>
+          </span>
+
         <div style="height: 15px"></div>
+
       </div>
     </table>
   </div>
@@ -88,8 +114,10 @@
   let add_post_url = "[[=XML(add_post_url)]]";
   let delete_post_url = "[[=XML(delete_post_url)]]";
   let load_posts_url = "[[=XML(load_posts_url)]]";
-  let thumbs_up_url = "[[=XML(thumbs_up_url)]]";
-  let thumbs_down_url = "[[=XML(thumbs_down_url)]]"
+  let user_name = "[[=name]]";
+  let set_likes_url = "[[=XML(set_likes_url)]]";
+  let get_likes_url = "[[=XML(get_likes_url)]]";
+  let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]
