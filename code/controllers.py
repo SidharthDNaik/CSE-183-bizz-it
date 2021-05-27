@@ -105,8 +105,8 @@ def set_likes():
     liker = request.json.get('liker')
     assert post_id is not None and like_type is not None
     print("This is like type : ", type(like_type))
-    print("This is post_id : ", type(post_id))
-    print("This is ")
+    print("This is db.likes.post_id : ", (db.likes.post_id))
+    print("This is post_id ", post_id)
     db.likes.update_or_insert(
         (
             (db.likes.post_id == post_id) &

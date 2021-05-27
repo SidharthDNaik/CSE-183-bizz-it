@@ -46,7 +46,6 @@ db.define_table('posts',
                         'string',
                         default = get_user_email,
                     )
-                
                )
 
 db.define_table('likes',
@@ -56,3 +55,4 @@ db.define_table('likes',
 )
 
 db.commit()
+
