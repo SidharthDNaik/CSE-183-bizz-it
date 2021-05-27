@@ -74,27 +74,27 @@
 
             <span @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 1)">
                 <i class="fa fa-flip-horizontal" :class="{
-                    'fa-thumbs-o-up': !(r.likes === 1),
-                    'fa-thumbs-up': (r.likes === 1),
+                    'fa-thumbs-o-up': !(r.like_type === 1),
+                    'fa-thumbs-up': (r.like_type === 1),
                     }">
                 </i>
             </span>
             <span @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 2)">
                 <i class="fa" :class="{
-                    'fa-thumbs-o-down': !(r.likes === 2),
-                    'fa-thumbs-down': (r.likes === 2),
+                    'fa-thumbs-o-down': !(r.like_type === 2),
+                    'fa-thumbs-down': (r.like_type === 2),
                     }">
                 </i>
             </span>
 
             <span v-if="r.hover">
                 <br>
-                <span v-if="r.num_likes > 0">
-                    Liked by<span v-if="r.likes === 1"> [[=name]],</span> {{ r.like_cache }}
+                <span v-if="r.number_of_likes > 0">
+                    Liked by<span v-if="r.like_type === 1"> [[=name]],</span> {{ r.string_of_likes }}
                 </span>
                 <br>
-                <span v-if="r.num_dislikes > 0">
-                    Disliked by<span v-if="r.likes === 2"> [[=name]],</span> {{ r.dislike_cache }}
+                <span v-if="r.number_of_dislikes > 0">
+                    Disliked by<span v-if="r.like_type === 2"> [[=name]],</span> {{ r.string_of_dislikes }}
                 </span>
             </span>
           </span>

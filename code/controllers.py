@@ -54,7 +54,7 @@ def index():
 @action('load_posts')
 @action.uses(auth, url_signer.verify(), db)
 def load_posts():
-    rows = db(db.post).select().as_list()
+    rows = db(db.posts).select().as_list()
     return dict(
         rows= rows,
         )
@@ -64,7 +64,7 @@ def load_posts():
 def add_post():
     name = get_name()
     email = get_user_email()
-    id = db.post.insert(
+    id = db.posts.insert(
         content=request.json.get('content'),
         name=name,
         email = email,
@@ -80,45 +80,49 @@ def add_post():
 def delete_post():
     id = request.params.get('id')
     assert id is not None
-    db(db.post.id == id).delete()
+    db(db.posts.id == id).delete()
     return "ok"
 
 @action('get_likes')
 @action.uses(url_signer.verify(), db)
 def get_likes():
     post_id = request.params.get('post_id')
-    liker = requests.params.get('liker')
+    liker = request.params.get('liker')
     row = db(
-                (db.likes.post == post_id) &
+                (db.likes.post_id == post_id) &
                 (db.likes.liker == liker)
             ).select().first()
-    likes = row.likes if row is not None else 0
+    like_type = row.like_type if row is not None else 0
     return dict(
-        likes=likes
+        like_type=like_type
     )
 
 @action('set_likes', method='POST')
 @action.uses(url_signer.verify(), db)
 def set_likes():
     post_id = request.json.get('post_id')
-    like_type = requests.json.get('like_type')
-    liker = requests.json.get('liker')
-    assert post_id is not None and likes is not None
+    like_type = request.json.get('like_type')
+    liker = request.json.get('liker')
+    assert post_id is not None and like_type is not None
+    print("This is like type : ", type(like_type))
+    print("This is post_id : ", type(post_id))
+    print("This is ")
     db.likes.update_or_insert(
-        ((db.likes.post == post_id) &
-         (db.stars.rater == liker)
+        (
+            (db.likes.post_id == post_id) &
+            (db.likes.liker == liker)
         ),
-        post=post_id,
-        liker=liker,
+        post_id=post_id,
         like_type=like_type,
+        liker=liker,
     )
     return "yeet"
 
 @action('get_likes_stream')
 @action.uses(url_signer.verify(), db)
 def get_likes_stream():
-    post_id = requests.params.get('post_id')
-    liker = requests.params.get('liker')
+    post_id = request.params.get('post_id')
+    liker = request.params.get('liker')
     rows = db(
                 (db.likes.post_id == post_id) &
                 (db.likes.liker != liker)
@@ -129,6 +133,7 @@ def get_likes_stream():
     string_of_dislikes = ""
     i = 0
     for r in rows:
+        print(len(rows)-1)
         if(r['like_type'] == 1):
             if i != len(rows) - 1:
                 string_of_likes += r['liker'] + ", "
@@ -141,6 +146,7 @@ def get_likes_stream():
             else:
                 string_of_dislikes += r['liker']
             number_of_dislikes += 1
+        i += 1
     return dict(
         number_of_likes=number_of_likes,
         number_of_dislikes=number_of_dislikes,

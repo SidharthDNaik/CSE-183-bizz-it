@@ -12,7 +12,6 @@ let init = (app) => {
         post_mode: false,
         name : "",
         add_content: "",
-        likes: "",
         email: "",
         is_matching: false,
         rows: [],
@@ -34,7 +33,7 @@ let init = (app) => {
 
     app.likes_stream = (a) => {
         a.map((e) => {
-            Vue.set(e, 'hover', true);
+            Vue.set(e, 'hover', false);
             Vue.set(e, 'number_of_likes', 0);
             Vue.set(e, 'number_of_dislikes', 0);
             Vue.set(e, 'string_of_likes', "");
@@ -99,7 +98,7 @@ let init = (app) => {
             Vue.set(row, 'like_type', 0)
             if (like_type === 1) {
                 Vue.set(row, 'number_of_likes', row.number_of_likes - 1)
-            } else if (likes === 2) {
+            } else if (like_type === 2) {
                 Vue.set(row, 'num_of_dislikes', row.number_of_dislikes - 1)
             }
         } else {
@@ -115,14 +114,15 @@ let init = (app) => {
                 Vue.set(row, 'number_of_dislikes', row.number_of_dislikes + 1)
             }
         }
-        axios.post(set_likes_url,
-        {post_id: row.id, like_type: row.like_type, liker: user_name});
+        console.log(row.number_of_dislikes);
+        axios.post(set_likes_url, {post_id: row.id, 
+                                   like_type: row.like_type, 
+                                   liker: user_name});
         app.enumerate(app.vue.rows);
     };
 
     app.set_hover = function (row_idx, new_status) {
         let row = app.vue.rows[row_idx];
-        console.log("get to here");
         Vue.set(row, 'hover', new_status);
     };
 
@@ -169,8 +169,7 @@ let init = (app) => {
                     for(let row of app.vue.rows) {
                         axios.get(get_likes_stream_url, {params: {
                             "post_id": row.id,
-                            "liker": uer_name,
-
+                            "liker": user_name,
                         }}).then((result) => {
                             row.number_of_likes += result.data.number_of_likes;
                             row.number_of_dislikes += result.data.number_of_dislikes;
