@@ -126,28 +126,19 @@ def get_likes_stream():
              ).select().as_list()
     number_of_likes = 0
     number_of_dislikes = 0
-    string_of_likes = ""
+    likes = []
     string_of_dislikes = ""
     i = 0
     for r in rows:
-        print("number of rows : ", len(rows))
-        print("index i : ", i)
         if(r['like_type'] == 1):
-            if i != len(rows) - 1:
-                string_of_likes += r['likee'] + ", "
-            else:
-                string_of_likes += r['likee']
+            likes.append(r['likee'])
             number_of_likes += 1
         elif(r['like_type'] == 2):
-            if i != len(rows) - 1:
-                string_of_dislikes += r['likee'] + ", "
-            else:
-                string_of_dislikes += r['likee']
+            string_of_dislikes += r['likee'] + ", "
             number_of_dislikes += 1
-        i += 1
     return dict(
         number_of_likes=number_of_likes,
         number_of_dislikes=number_of_dislikes,
-        string_of_likes=string_of_likes,
+        likes=likes,
         string_of_dislikes=string_of_dislikes,
     )

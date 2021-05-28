@@ -70,59 +70,84 @@
             </div>
           </div>
 
-          [[if email:]]
-            <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
-              <div stlye="padding-bottom: 5px">
-                <span @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 1)">
-                    <i class="fa fa-flip-horizontal" :class="{
-                        'fa-thumbs-o-up': !(r.like_type === 1),
-                        'fa-thumbs-up': (r.like_type === 1),
-                        }">
-                    </i>
-                </span>
-                <span @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 2)">
-                    <i class="fa" :class="{
-                        'fa-thumbs-o-down': !(r.like_type === 2),
-                        'fa-thumbs-down': (r.like_type === 2),
-                        }">
-                    </i>
-                </span>
+          <div stlye="padding-bottom: 5px">
+            <!-- if email you can like -->
+            [[if email:]]
+
+              <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
+
+                  <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 1)">
+                      <i class="fa fa-flip-horizontal" :class="{
+                          'fa-heart-o': !(r.like_type === 1),
+                          'fa-heart': (r.like_type === 1),
+                          }">
+                      </i>
+                  </span>
+
+              </span>
+            <!-- Cannot like -->
+            [[else:]]
+
+              <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
+  
+                    <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)">
+                      <i class="fa fa-heart-o"></i>
+                    </span>
+  
+              </span>
+            
+            [[pass]]
+            <!-- toggle comments -->
+              <span @click="toggle_comments(r._idx)" class="icon has-text-danger">
+                <i class="fa " :class="{
+                  'fa-comment-o': !(r.comments_a_viewable),
+                  'fa-comment': (r.comments_a_viewable),
+                  }">
+                </i>
+              </span>
+
+          </div>
+
+          <span v-if="r.hover && r.number_of_likes > 0">
+              <br>
+              <span style="color:crimson" v-if="r.number_of_likes > 0">
+                  Liked by<span v-if="r.like_type === 1"> [[=name]]<span v-if="r.number_of_likes != 1">,</span></span> 
+                  <span v-for="(l, index) in r.likes">
+                    <span v-if="index === r.likes.length - 1 "> 
+                      {{l}}
+                    </span>
+                    <span v-else> 
+                      {{l}}<span>, </span>
+                    </span>
+                  </span>
+              </span>
+              <br>
+          </span>
+          
+          <span v-if="r.comments_a_viewable">
+
+              <br>
+
+              <div style="padding-bottom: 10px;">
+
+                <div>Sidharth Naik: Wow great post </div> 
+
+                <div>S N: Love this post</div>
+
+              </div>  
+
+              <div>
+
+                <div style="float: left; width: 94%;">
+                  <input class="input" type="text" placeholder="Type here to enter comment">
+                </div>
+                <input type="submit" @click=" " value="Post" class="button is-primary">
+
               </div>
 
-              <span v-if="r.hover && (r.number_of_likes > 0 || r.number_of_dislikes > 0)">
-                  <br>
-                  <span v-if="r.number_of_likes > 0">
-                      Liked by<span v-if="r.like_type === 1"> [[=name]]<span v-if="r.number_of_likes != 1">, </span> </span> {{ r.string_of_likes }}
-                  </span>
-                  <br>
-                  <span v-if="r.number_of_dislikes > 0">
-                      Disliked by<span v-if="r.like_type === 2"> [[=name]]<span v-if="r.number_of_dislikes != 1">, </span> </span> {{ r.string_of_dislikes }}
-                  </span>
-              </span>
-            </span>
-          [[else:]]
-          <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
-            <div stlye="padding-bottom: 5px">
-              <span @mouseover="set_hover(r._idx, true)">
-                  <i class="fa fa-thumbs-o-up"></i>
-              </span>
-              <span @mouseover="set_hover(r._idx, true)">
-                  <i class="fa fa-thumbs-o-down"></i>
-              </span>
-            </div>
+              <br>
 
-            <span v-if="r.hover && (r.number_of_likes > 0 || r.number_of_dislikes > 0)">
-                <br>
-                <span v-if="r.number_of_likes > 0">
-                    Liked by<span v-if="r.like_type === 1"> [[=name]]<span v-if="r.number_of_likes != 1">, </span> </span> {{ r.string_of_likes }}
-                </span>
-                <br>
-                <span v-if="r.number_of_dislikes > 0">
-                    Disliked by<span v-if="r.like_type === 2"> [[=name]]<span v-if="r.number_of_dislikes != 1">, </span> </span> {{ r.string_of_dislikes }}
-                </span>
-            </span>
           </span>
-          [[pass]]
 
         <div style="height: 15px"></div>
 

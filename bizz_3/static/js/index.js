@@ -36,8 +36,15 @@ let init = (app) => {
             Vue.set(e, 'hover', false);
             Vue.set(e, 'number_of_likes', 0);
             Vue.set(e, 'number_of_dislikes', 0);
-            Vue.set(e, 'string_of_likes', "");
+            Vue.set(e, 'likes', []);
             Vue.set(e, 'string_of_dislikes', "");
+        });
+        return a;
+    };
+
+    app.commentable = (a) => {
+        a.map((e) => {
+            Vue.set(e, 'comments_a_viewable', false);
         });
         return a;
     };
@@ -56,7 +63,7 @@ let init = (app) => {
                         email: response.data.email,
                         number_of_likes: 0,
                         number_of_dislikes: 0,
-                        string_of_likes: "",
+                        likes: [],
                         string_of_dislikes: "",
                     });
                     app.enumerate(app.vue.rows);
@@ -126,6 +133,11 @@ let init = (app) => {
         Vue.set(row, 'hover', new_status);
     };
 
+    app.toggle_comments = function (row_idx){
+        let row = app.vue.rows[row_idx];
+        Vue.set(row, 'comments_a_viewable', !row.comments_a_viewable);
+    };
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -134,6 +146,7 @@ let init = (app) => {
         delete_post: app.delete_post,
         set_hover: app.set_hover,
         set_likes: app.set_likes,
+        toggle_comments: app.toggle_comments,
     };
 
     // This creates the Vue instance.
@@ -150,7 +163,7 @@ let init = (app) => {
     app.init = () => {
         axios.get(load_posts_url).then(
         function (response) {
-            app.vue.rows = app.likes_stream(app.likeable(app.enumerate(response.data.rows)));
+            app.vue.rows = app.commentable(app.likes_stream(app.likeable(app.enumerate(response.data.rows))));
         }).then(
             () => {
                 for(let row of app.vue.rows){
@@ -173,7 +186,7 @@ let init = (app) => {
                         }}).then((result) => {
                             row.number_of_likes += result.data.number_of_likes;
                             row.number_of_dislikes += result.data.number_of_dislikes;
-                            row.string_of_likes = result.data.string_of_likes;
+                            row.likes = result.data.likes;
                             row.string_of_dislikes = result.data.string_of_dislikes;
                         });
                     }
