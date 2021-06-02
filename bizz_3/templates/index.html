@@ -9,9 +9,17 @@
 <div class="section" id="vue-target" v-cloak>
 
   <div class="container block">
-    <h1 class="title">Bizzit</h1>
-    <div class="container">
-      <nav class="level">
+    <nav class="level">
+      <div class="level-left">
+        <figure class="image is-96x96 ">
+          <img src="https://i.postimg.cc/R0JPXKHY/Messages-Image-470208592.png">
+       </figure>
+      <div class="section">
+        <h1 class="title is-size-1">Bizzit</h1>
+      </div>
+     </div>
+     <div class="container">
+      <nav class="level-middle">
         <div class="level-item has-text-centered">
           <a class="button" href="[[=URL('index')]]">
             <span>Feed</span>
@@ -26,6 +34,14 @@
       </nav>
      
     </div>
+     <div class="level-right ">
+      <!-- <p class="subtitle is-size-6 is-italic"> -->
+      <p class="subtitle is-size-6">
+        A place for small businesses to grow.
+     </p>
+     </div>
+    </nav>
+
     <div class="container block">
         <!-- Return user name -->
       [[if email:]]
