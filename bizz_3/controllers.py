@@ -142,3 +142,23 @@ def get_likes_stream():
         likes=likes,
         string_of_dislikes=string_of_dislikes,
     )
+
+# This controller is used to go to the explore map page
+@action('explore')
+@action.uses(auth, url_signer, 'explore.html')
+def explore():
+    return dict(
+        # This is the signed URL for the callback.
+        email=get_user_email(),
+        name=get_name(),
+    )
+
+# This controller is used to initialize the database.
+@action('profile')
+@action.uses(auth, url_signer, 'profile.html')
+def profile():
+    return dict(
+        # This is the signed URL for the callback.
+        email=get_user_email(),
+        name=get_name(),
+    )   
