@@ -140,9 +140,7 @@
     <table class="table is-striped is-fullwidth">
       <div v-for="r in rows.slice().reverse()" class="box">
 
-        <div class="block">
-          <img width="400" :src="img_url" />
-        </div>
+        
 
         <!-- <img v-if="r.thumbnail" :src="r.thumbnail"/> -->
         <!-- <img v-if="r.thumbnail" width="50" :src="r.thumbnail" /> -->
@@ -171,8 +169,12 @@
           </div>
         </td> -->
         
-
-  
+        <div v-if="r.email === '[[=email]]'">
+          <div class="block">
+            <img width="400" :src="img_url" />
+          </div>
+        </div>
+        
         <div class="content is-medium">
             <p>
               {{r.content}}
