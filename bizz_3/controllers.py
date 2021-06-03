@@ -48,6 +48,9 @@ def index():
         load_posts_url = URL('load_posts', signer=url_signer),
         add_post_url = URL('add_post', signer=url_signer),
         delete_post_url = URL('delete_post', signer=url_signer),
+        file_upload_url = URL('file_upload', signer=url_signer),
+        upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
+        upload_url = URL('upload_image', signer=url_signer),
     )
 
 # This is our very first API function.
@@ -162,3 +165,32 @@ def profile():
         email=get_user_email(),
         name=get_name(),
     )   
+
+
+@action('file_upload', method="PUT")
+@action.uses() # Add here things you might want to use.
+def file_upload():
+    file_name = request.params.get("file_name")
+    file_type = request.params.get("file_type")
+    uploaded_file = request.body # This is a file, you can read it.
+    # Diagnostics
+    print("Uploaded", file_name, "of type", file_type)
+    print("Content:", uploaded_file.read())
+    return "ok"
+
+@action('upload_thumbnail', method="POST")
+@action.uses(url_signer.verify(), db)
+def upload_thumbnail():
+    post_id = request.json.get("post_id")
+    thumbnail = request.json.get("thumbnail")
+    db(db.posts.id == post_id).update(thumbnail=thumbnail)
+    return "ok"
+
+
+@action('upload_image', method="POST")
+@action.uses(url_signer.verify(), db)
+def upload_image():
+    post_id = request.json.get("post_id")
+    image = request.json.get("image")
+    db(db.posts.id == post_id).update(image=image)
+    return "ok"

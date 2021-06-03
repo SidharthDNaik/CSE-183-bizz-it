@@ -70,12 +70,87 @@
           <textarea v-model="add_content" class="textarea" placeholder="Enter new post here"></textarea>
         </div>
       </div>
+
+      <!-- <td class="is-tight">
+        <div class="file is-info">
+          <label class="file-label">
+            <input class="file-input" type="file"
+                  accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                   @change="upload_file($event, r._idx)">
+            <span class="file-cta">
+              <span class="file-label">
+                <span><i class="fa fa-upload"></i></span>
+              </span>
+            </span>
+          </label>
+        </div>
+      </td> -->
+      
+      <!-- <div>
+        <p class="control">
+          <div class="file is-info">
+            <label class="file-label">
+              <input class="file-input" type="file"
+                     accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                     @change="upload_file($event, r._idx)">
+              <span class="file-cta">
+                <span class="file-label">
+                  <span><i class="fa fa-upload"></i></span>
+                </span>
+              </span>
+            </label>
+          </div>
+        </p>
+      </div> -->
+
+      <!-- code to add images to posts -->
+      <div class="section" id="vue-target" v-cloak>
+        <div v-if="!selection_done" class="field has-addons block">
+          <p class="control">
+            <div class="file is-info">
+              <label class="file-label">
+                <input class="file-input" type="file"
+                       accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                       @change="select_file($event)"
+                       @change="upload_file($event, r._idx)">
+                <span class="file-cta">
+                  <span class="file-label">
+                    <span>Add Image to Post</span>
+                  </span>
+                </span>
+              </label>
+            </div>
+          </p>
+        </div>
+        <template v-if="selection_done && !uploaded">
+          <div class="block">
+            <img width="400" :src="img_url" />
+          </div>
+          <div class="block">
+            <button class="button is-success" :disabled="uploading" @click="upload_file">
+              <span class="icon is-small">
+                <i v-if="!uploading" class="fa fa-upload"></i>
+                <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
+              </span>
+              <span>Upload</span>
+            </button>
+          </div>
+        </template>
+        <div v-if="uploaded">
+          <i class="fa fa-check"></i> Uploaded!
+        </div>
+      </div>
+      
+
+
+
       <div class="field">
         <div class="control">
           <input type="submit" @click="add_post" value="Post" class="button is-primary">
           <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning">
         </div>
       </div>
+
     </div>
   </div>
 
@@ -83,6 +158,40 @@
   <div class="container block">
     <table class="table is-striped is-fullwidth">
       <div v-for="r in rows.slice().reverse()" class="box">
+
+        <div class="block">
+          <img width="400" :src="img_url" />
+        </div>
+
+        <!-- <img v-if="r.thumbnail" :src="r.thumbnail"/> -->
+        <!-- <img v-if="r.thumbnail" width="50" :src="r.thumbnail" /> -->
+
+        <!-- <div v-if="r.image" class="box">
+          <img width="100" :src="r.image" />
+        </div> -->
+
+        <!-- <td class="is-tight">
+          <div class="file is-info">
+            <label class="file-label">
+              <input class="file-input" type="file"
+                     accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                     @change="upload_file($event, r._idx)">
+              <span class="file-cta">
+                <span class="file-label">
+                  <span><i class="fa fa-upload"></i></span>
+                </span>
+              </span>
+            </label>
+          </div>
+        </td>
+        <td class="is-tight">
+          <div v-if="r.image" class="box">
+            <img width="100" :src="r.image" />
+          </div>
+        </td> -->
+        
+
+  
         <div class="content is-medium">
             <p>
               {{r.content}}
@@ -222,6 +331,8 @@
   let set_likes_url = "[[=XML(set_likes_url)]]";
   let get_likes_url = "[[=XML(get_likes_url)]]";
   let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
+  let file_upload_url = "[[=XML(file_upload_url)]]";
+  let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]
