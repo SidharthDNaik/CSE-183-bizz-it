@@ -10,12 +10,15 @@ let init = (app) => {
     // This is the Vue data.
     app.data = {
         post_mode: false,
+        search_mode: false,
         name : "",
         add_content: "",
         add_title: "",
         add_location: "",
         email: "",
         is_matching: false,
+        post_search:"",
+        posts_list: [], //not used right now, using rows instead 
         rows: [],
         selection_done: false,
         uploading: false,
@@ -223,6 +226,19 @@ let init = (app) => {
         Vue.set(row, 'comments_a_viewable', !row.comments_a_viewable);
     };
 
+    app.search = function () {
+       axios.get(search_url, {params: {q: app.vue.post_search}})
+            .then(function (result){
+                app.vue.rows = app.enumerate(result.data.rows);
+            });
+        app.vue.search_mode = true;
+    };
+
+    app.clear_search = function () {
+        app.vue.post_search = "";
+        app.search();
+    };
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -234,6 +250,9 @@ let init = (app) => {
         toggle_comments: app.toggle_comments,
         select_file: app.select_file,
         upload_file: app.upload_file,
+        do_search: app.search,
+        search: app.search,
+        clear_search: app.clear_search,
     };
 
     // This creates the Vue instance.
@@ -248,7 +267,7 @@ let init = (app) => {
     // load the data.
     // For the moment, we 'load' the data from a string.
     app.init = () => {
-        axios.get(load_posts_url).then(
+        axios.get(search_url).then(
         function (response) {
             app.vue.rows = app.commentable(app.likes_stream(app.likeable(app.enumerate(response.data.rows))));
         }).then(
