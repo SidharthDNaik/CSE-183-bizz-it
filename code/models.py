@@ -42,10 +42,22 @@ db.define_table('posts',
                         'string',
                     ),
                     Field(
+                        'title',
+                        'string',
+                    ),
+                    Field(
+                        'location',
+                        'string',
+                    ),
+                    Field(
                         'email',
                         'string',
                         default = get_user_email,
-                    )
+                    ),
+                    Field(
+                        'thumbnail','text'
+                    ),
+                    
                )
 
 db.define_table('likes',

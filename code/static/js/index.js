@@ -13,13 +13,23 @@ let init = (app) => {
         search_mode: false,
         name : "",
         add_content: "",
+        add_title: "",
+        add_location: "",
         email: "",
         is_matching: false,
         post_search:"",
         posts_list: [], //not used right now, using rows instead 
         rows: [],
+        selection_done: false,
+        uploading: false,
+        uploaded_file: "",
+        uploaded: false,
+        img_url: "",
+        add_mode: false,
     };
 
+    // This is the file selected for upload.
+    app.file = null;
 
     app.enumerate = (a) => {
         // This adds an _idx field to each element of the array.
@@ -27,6 +37,74 @@ let init = (app) => {
         a.map((e) => {e._idx = k++;});
         return a;
     };
+
+    app.select_file = function (event) {
+        // Reads the file.
+        let input = event.target;
+        app.file = input.files[0];
+        if (app.file) {
+            app.vue.selection_done = true;
+            // We read the file.
+            let reader = new FileReader();
+            reader.addEventListener("load", function () {
+                app.vue.img_url = reader.result;
+            });
+            reader.readAsDataURL(app.file);
+        }
+    };
+
+    app.upload_complete = function (file_name, file_type) {
+        app.vue.uploading = false;
+        app.vue.uploaded = true;
+    };
+
+    app.start_edit = function (row_idx, fn) {
+        let row = app.vue.rows[row_idx];
+        app.vue.rows[row_idx]._state[fn] = "edit";
+    };
+
+    app.stop_edit = function (row_idx, fn) {
+        let row = app.vue.rows[row_idx];
+        if (row._state[fn] === "edit") {
+            row._state[fn] = "pending";
+            axios.post(edit_post_url,
+                {
+                    id: row.id,
+                    field: fn,
+                    value: row[fn], // row.first_name
+                }).then(function (result) {
+                row._state[fn] = "clean";
+            });
+        }
+        // If I was not editing, there is nothing that needs saving.
+    }
+
+    app.upload_file = function (event, row_idx) {
+        let input = event.target;
+        let file = input.files[0];
+        let row = app.vue.rows[row_idx];
+        if (file) {
+            let reader = new FileReader();
+            reader.addEventListener("load", function () {
+                // Sends the image to the server.
+                axios.post(upload_thumbnail_url,
+                    {
+                        post_id: row.id,
+                        thumbnail: reader.result,
+                        
+                    })
+                    .then(function () {
+                        // Sets the local preview.
+                        row.thumbnail = reader.result;
+
+                    });
+            });
+            reader.readAsDataURL(file);
+        }
+
+        app.vue.rows = rows;
+    };
+
 
     app.likeable = (a) => {
         a.map((e) => {
@@ -57,12 +135,16 @@ let init = (app) => {
     app.add_post = function () {
         axios.post(add_post_url,
             {
+                title: app.vue.add_title,
                 content: app.vue.add_content,
+                location: app.vue.add_location,
             }).then(
                 function (response){
                     app.vue.rows.push({
                         id: response.data.id,
+                        title: app.vue.add_title,
                         content: app.vue.add_content,
+                        location: app.vue.add_location,
                         name: response.data.name,
                         email: response.data.email,
                         number_of_likes: 0,
@@ -72,12 +154,16 @@ let init = (app) => {
                     });
                     app.enumerate(app.vue.rows);
                     app.reset_form();
-                    app.set_post_status;
+                    
+                    app.set_post_status(false);
+                    app.set_add_status(false);
                 });
     };
 
     app.reset_form = function () {
+        app.vue.add_title = "";
         app.vue.add_content = "";
+        app.vue.add_location = "";
         app.vue.name = "";
     };
 
@@ -97,6 +183,10 @@ let init = (app) => {
                 }
             }
         });
+    };
+
+    app.set_add_status = function (new_status) {
+        app.vue.add_mode = new_status;
     };
 
     app.set_post_status = function (new_status) {
@@ -155,11 +245,17 @@ let init = (app) => {
         app.search();
     };
 
+    app.toggle_comments = function (row_idx){
+        let row = app.vue.rows[row_idx];
+        Vue.set(row, 'comments_a_viewable', !row.comments_a_viewable);
+    };
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
         add_post: app.add_post,
         set_post_status: app.set_post_status,
+        set_add_status: app.set_add_status,
         delete_post: app.delete_post,
         set_hover: app.set_hover,
         set_likes: app.set_likes,
@@ -167,6 +263,8 @@ let init = (app) => {
         do_search: app.search,
         search: app.search,
         clear_search: app.clear_search,
+        select_file: app.select_file,
+        upload_file: app.upload_file,
     };
 
     // This creates the Vue instance.
@@ -211,6 +309,8 @@ let init = (app) => {
                         });
                     }
                 });
+
+            // app.vue.rows = rows;
     };
 
     // Call to the initializer.

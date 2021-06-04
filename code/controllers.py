@@ -32,7 +32,6 @@ from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_name
 import uuid 
 import random 
-import gmaps
 
 url_signer = URLSigner(session)
 
@@ -40,6 +39,7 @@ url_signer = URLSigner(session)
 @action.uses(auth.user, url_signer, 'index.html')
 def index():
     show_delete = db.auth_user.email == get_user_email()
+    
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
@@ -52,6 +52,8 @@ def index():
         add_post_url = URL('add_post', signer=url_signer),
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
+        upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
+       
     )
 
 # This is our very first API function.
@@ -69,7 +71,9 @@ def add_post():
     name = get_name()
     email = get_user_email()
     id = db.posts.insert(
+        title=request.json.get('title'),
         content=request.json.get('content'),
+        location=request.json.get('location'),
         name=name,
         email = email,
     )
@@ -151,20 +155,7 @@ def get_likes_stream():
 @action('explore')
 @action.uses(auth.user, url_signer, 'explore.html')
 def explore():
-    gmaps.configure(api_key='AIzaSyCMP2HhPC0Eu8LM8m4WmmI-4JEDZQjj2jA')
-
-    marker_locations=[
-    (-34.0, -59.166672),
-    (-32.23333, -64.433327),
-    (40.166672, 44.133331),
-    (51.216671, 5.0833302),
-    (51.333328, 4.25)
-    ]
-
-    fig = gmaps.figure()
-    markers = gmaps.marker_layer(marker_locations)
-    fig.add_layer(markers)
-    fig
+  
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
@@ -188,15 +179,20 @@ def search():
     if t:
         tt = t.strip()
         
-        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)))
+        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)))
         
     else: 
         q = db.posts.id > 0
 
-    #posts_list = db(q).select(db.posts.ALL).as_list()
     rows = db(q).select().as_list()
-    #print(rows)
-
     return dict(rows=rows)
     
 
+
+@action('upload_thumbnail', method="POST")
+@action.uses(url_signer.verify(), db)
+def upload_thumbnail():
+    post_id = request.json.get("post_id")
+    thumbnail = request.json.get("thumbnail")
+    db(db.posts.id == post_id).update(thumbnail=thumbnail)
+    return "ok"
