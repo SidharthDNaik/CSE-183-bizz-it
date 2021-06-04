@@ -48,12 +48,40 @@
 
   <div v-if="post_mode" class="container block">
     <div class="form">
+      <p class="subtitle is-size-4 has-text-primary">
+        New Post:
+     </p>
 
       <!-- This looks like a form, but is not.  We just need the inputs. -->
       <div class="field">
-        <div class="control">
-          <textarea v-model="add_content" class="textarea" placeholder="Enter new post here"></textarea>
+
+        <div class="container block">
+          <div class="control">
+            <p class="subtitle is-size-5">
+              Title:
+           </p>
+            <input class="input is-info" type="text" v-model="add_title" placeholder="Enter a title for your post here">
+          </div>
         </div>
+        
+        <div class="container block">
+          <div class="control">
+            <p class="subtitle is-size-5">
+              Caption:
+           </p>
+            <textarea class="textarea is-info" v-model="add_content" class="textarea" placeholder="Enter post caption here"></textarea>
+          </div>
+        </div>
+
+        <div class="container block">
+          <div class="control">
+            <p class="subtitle is-size-5">
+              Location:
+           </p>
+            <input class="input is-primary" type="text" v-model="add_location" placeholder="Enter your small business' address here">
+          </div>
+        </div>
+        
       </div>
 
       
@@ -71,6 +99,12 @@
   <div class="container block">
     <table class="table is-striped is-fullwidth">
       <div v-for="r in rows.slice().reverse()" class="box">
+
+        <div class="title">
+          <p>
+            {{r.title}}
+          </p>
+        </div>
         
         <div style="float:right;">
           <div v-if="r.email === '[[=email]]'">
@@ -99,6 +133,7 @@
 
           <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
         </div>
+        
         <div class="content is-medium">
             <p>
               {{r.content}}
@@ -107,6 +142,11 @@
           <div class="content is-small">
             <p>
               {{r.name}}
+            </p>
+          </div>
+          <div class="content is-small">
+            <p>
+              {{r.location}}
             </p>
           </div>
 

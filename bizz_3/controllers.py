@@ -49,7 +49,6 @@ def index():
         load_posts_url = URL('load_posts', signer=url_signer),
         add_post_url = URL('add_post', signer=url_signer),
         delete_post_url = URL('delete_post', signer=url_signer),
-       
         upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
        
     )
@@ -69,7 +68,9 @@ def add_post():
     name = get_name()
     email = get_user_email()
     id = db.posts.insert(
+        title=request.json.get('title'),
         content=request.json.get('content'),
+        location=request.json.get('location'),
         name=name,
         email = email,
     )

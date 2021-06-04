@@ -12,6 +12,8 @@ let init = (app) => {
         post_mode: false,
         name : "",
         add_content: "",
+        add_title: "",
+        add_location: "",
         email: "",
         is_matching: false,
         rows: [],
@@ -130,12 +132,16 @@ let init = (app) => {
     app.add_post = function () {
         axios.post(add_post_url,
             {
+                title: app.vue.add_title,
                 content: app.vue.add_content,
+                location: app.vue.add_location,
             }).then(
                 function (response){
                     app.vue.rows.push({
                         id: response.data.id,
+                        title: app.vue.add_title,
                         content: app.vue.add_content,
+                        location: app.vue.add_location,
                         name: response.data.name,
                         email: response.data.email,
                         number_of_likes: 0,
@@ -150,7 +156,9 @@ let init = (app) => {
     };
 
     app.reset_form = function () {
+        app.vue.add_title = "";
         app.vue.add_content = "";
+        app.vue.add_location = "";
         app.vue.name = "";
     };
 
