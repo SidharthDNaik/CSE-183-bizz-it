@@ -26,6 +26,7 @@ let init = (app) => {
         uploaded: false,
         img_url: "",
         add_mode: false,
+        post_category: "",
     };
 
     // This is the file selected for upload.
@@ -138,6 +139,8 @@ let init = (app) => {
                 title: app.vue.add_title,
                 content: app.vue.add_content,
                 location: app.vue.add_location,
+                category: app.vue.post_category,
+                
             }).then(
                 function (response){
                     app.vue.rows.push({
@@ -151,11 +154,14 @@ let init = (app) => {
                         number_of_dislikes: 0,
                         likes: [],
                         string_of_dislikes: "",
+                        category: app.vue.post_category,
                     });
                     app.enumerate(app.vue.rows);
                     app.reset_form();
                     app.set_post_status;
+                    app.get_category;
                 });
+                print(category);
     };
 
     app.reset_form = function () {
@@ -163,6 +169,7 @@ let init = (app) => {
         app.vue.add_content = "";
         app.vue.add_location = "";
         app.vue.name = "";
+        app.vue.post_category = "";
     };
 
     app.delete_post = function(row_idx) {
@@ -185,6 +192,10 @@ let init = (app) => {
 
     app.set_post_status = function (new_status) {
         app.vue.post_mode = new_status;
+    };
+
+    app.get_category = function (category_input) {
+        app.vue.post_category = category_input;
     };
 
     app.set_likes = function(row_idx, like_type){
@@ -258,6 +269,8 @@ let init = (app) => {
         clear_search: app.clear_search,
         select_file: app.select_file,
         upload_file: app.upload_file,
+        get_category: app.get_category,
+        
     };
 
     // This creates the Vue instance.
@@ -309,6 +322,8 @@ let init = (app) => {
     // Call to the initializer.
     app.init();
 };
+
+
 
 // This takes the (empty) app object, and initializes it,
 // putting all the code i

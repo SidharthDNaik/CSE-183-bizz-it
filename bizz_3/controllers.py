@@ -74,6 +74,7 @@ def add_post():
         title=request.json.get('title'),
         content=request.json.get('content'),
         location=request.json.get('location'),
+        category=request.json.get('category'),
         name=name,
         email = email,
     )
@@ -179,7 +180,7 @@ def search():
     if t:
         tt = t.strip()
         
-        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)))
+        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)) | (db.posts.category.contains(tt)))
         
     else: 
         q = db.posts.id > 0
@@ -187,8 +188,6 @@ def search():
     rows = db(q).select().as_list()
     return dict(rows=rows)
     
-
-
 @action('upload_thumbnail', method="POST")
 @action.uses(url_signer.verify(), db)
 def upload_thumbnail():
@@ -196,3 +195,4 @@ def upload_thumbnail():
     thumbnail = request.json.get("thumbnail")
     db(db.posts.id == post_id).update(thumbnail=thumbnail)
     return "ok"
+
