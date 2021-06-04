@@ -325,3 +325,16 @@ success!
 success!
 success!
 success!
+timestamp: 2021-06-03T21:32:36.827880
+ALTER TABLE "posts" ADD "title" CHAR(512);
+timestamp: 2021-06-03T21:32:36.833166
+ALTER TABLE "posts" ADD "location" CHAR(512);
+timestamp: 2021-06-03T21:32:36.836430
+ALTER TABLE "posts" ADD "thumbnail" TEXT;
+success!
+success!
+success!
+success!
+success!
+success!
+success!

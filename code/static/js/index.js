@@ -13,11 +13,8 @@ let init = (app) => {
         search_mode: false,
         name : "",
         add_content: "",
-<<<<<<< HEAD
-=======
         add_title: "",
         add_location: "",
->>>>>>> origin/Neelam
         email: "",
         is_matching: false,
         post_search:"",
@@ -31,11 +28,8 @@ let init = (app) => {
         add_mode: false,
     };
 
-<<<<<<< HEAD
-=======
     // This is the file selected for upload.
     app.file = null;
->>>>>>> origin/Neelam
 
     app.enumerate = (a) => {
         // This adds an _idx field to each element of the array.
@@ -44,8 +38,6 @@ let init = (app) => {
         return a;
     };
 
-<<<<<<< HEAD
-=======
     app.select_file = function (event) {
         // Reads the file.
         let input = event.target;
@@ -114,7 +106,6 @@ let init = (app) => {
     };
 
 
->>>>>>> origin/Neelam
     app.likeable = (a) => {
         a.map((e) => {
             Vue.set(e, 'like_type', 0);
@@ -228,7 +219,6 @@ let init = (app) => {
     app.set_hover = function (row_idx, new_status) {
         let row = app.vue.rows[row_idx];
         Vue.set(row, 'hover', new_status);
-<<<<<<< HEAD
     };
 
     app.toggle_comments = function (row_idx){
@@ -247,13 +237,11 @@ let init = (app) => {
     app.clear_search = function () {
         app.vue.post_search = "";
         app.search();
-=======
     };
 
     app.toggle_comments = function (row_idx){
         let row = app.vue.rows[row_idx];
         Vue.set(row, 'comments_a_viewable', !row.comments_a_viewable);
->>>>>>> origin/Neelam
     };
 
     // We form the dictionary of all methods, so we can assign them
@@ -265,14 +253,11 @@ let init = (app) => {
         set_hover: app.set_hover,
         set_likes: app.set_likes,
         toggle_comments: app.toggle_comments,
-<<<<<<< HEAD
         do_search: app.search,
         search: app.search,
         clear_search: app.clear_search,
-=======
         select_file: app.select_file,
         upload_file: app.upload_file,
->>>>>>> origin/Neelam
     };
 
     // This creates the Vue instance.
@@ -287,11 +272,7 @@ let init = (app) => {
     // load the data.
     // For the moment, we 'load' the data from a string.
     app.init = () => {
-<<<<<<< HEAD
         axios.get(search_url).then(
-=======
-        axios.get(load_posts_url).then(
->>>>>>> origin/Neelam
         function (response) {
             app.vue.rows = app.commentable(app.likes_stream(app.likeable(app.enumerate(response.data.rows))));
         }).then(
@@ -321,11 +302,8 @@ let init = (app) => {
                         });
                     }
                 });
-<<<<<<< HEAD
-=======
 
             // app.vue.rows = rows;
->>>>>>> origin/Neelam
     };
 
     // Call to the initializer.

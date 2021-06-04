@@ -9,39 +9,6 @@
 <div class="section" id="vue-target" v-cloak>
 
   <div class="container block">
-    <h1 class="title">Bizzit</h1>
-    <div class="columns block">
-      <div class="column">
-        <p class="control has-icons-right">
-          <input class="input" type="text" v-model="post_search" @keyup="search"/>
-          <span class="icon is-small is-right">
-            <i class="fa fa-search"></i>
-          </span>
-        </p>
-      </div>
-      <div class="column is-narrow">
-        <button class="button" @click="clear_search">
-          <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
-        </button>
-      </div>
-    </div>
-
-    <div class="container">
-      <nav class="level">
-        <div class="level-item has-text-centered">
-          <a class="button" href="[[=URL('index')]]">
-            <span>Feed</span>
-          </a>
-          <a class="button" href="[[=URL('explore')]]">
-            <span>Explore Map</span>
-          </a>
-          <a class="button" href="[[=URL('profile')]]">
-            <span>Profile</span>
-          </a>
-        </div>
-      </nav>
-     
-    </div>
     <nav class="level">
       <div class="level-left">
         <figure class="image is-128x128 ">
@@ -59,6 +26,21 @@
      </div>
      
     </nav>
+    <div class="columns block">
+      <div class="column">
+        <p class="control has-icons-right">
+          <input class="input" type="text" v-model="post_search" @keyup="search"/>
+          <span class="icon is-small is-right">
+            <i class="fa fa-search"></i>
+          </span>
+        </p>
+      </div>
+      <div class="column is-narrow">
+        <button class="button" @click="clear_search">
+          <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
+        </button>
+      </div>
+    </div>
 
     <div class="container block">
         <!-- Return user name -->

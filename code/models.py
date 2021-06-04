@@ -53,7 +53,6 @@ db.define_table('posts',
                         'email',
                         'string',
                         default = get_user_email,
-                    )
                     ),
                     Field(
                         'thumbnail','text'
