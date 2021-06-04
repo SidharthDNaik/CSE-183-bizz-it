@@ -28,11 +28,8 @@ let init = (app) => {
         add_mode: false,
     };
 
-<<<<<<< HEAD:bizz_3/static/js/index.js
-=======
     // This is the file selected for upload.
     app.file = null;
->>>>>>> Neha:code/static/js/index.js
 
     app.enumerate = (a) => {
         // This adds an _idx field to each element of the array.
@@ -242,14 +239,11 @@ let init = (app) => {
         app.search();
     };
 
-<<<<<<< HEAD:bizz_3/static/js/index.js
-=======
     app.toggle_comments = function (row_idx){
         let row = app.vue.rows[row_idx];
         Vue.set(row, 'comments_a_viewable', !row.comments_a_viewable);
     };
 
->>>>>>> Neha:code/static/js/index.js
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -262,11 +256,8 @@ let init = (app) => {
         do_search: app.search,
         search: app.search,
         clear_search: app.clear_search,
-<<<<<<< HEAD:bizz_3/static/js/index.js
-=======
         select_file: app.select_file,
         upload_file: app.upload_file,
->>>>>>> Neha:code/static/js/index.js
     };
 
     // This creates the Vue instance.
