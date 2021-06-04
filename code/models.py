@@ -31,24 +31,7 @@ def get_time():
 #
 ## always commit your models to avoid problems later
 
-db.define_table('user',
-                        Field(
-                            'first_name',
-                            'string',
-                            default=get_user_first_name,
-                        ),
-                        Field(
-                            'last_name',
-                            'string',
-                            default=get_user_last_name,
-                        ),
-                )
-
-db.define_table('post',
-                    Field(
-                        'user_id',
-                        'reference user',
-                    ),
+db.define_table('posts',
                     Field(
                         'name',
                         'string',
@@ -63,13 +46,13 @@ db.define_table('post',
                         'string',
                         default = get_user_email,
                     )
-                
                )
 
 db.define_table('likes',
-                Field('post' , 'reference post'),
-                Field('likers', 'string'),
-                Field('liker', 'reference auth_user', default=get_user_email),
+                Field('post_id', 'reference posts'),
+                Field('like_type', 'integer', default=0),
+                Field('likee'),
 )
 
 db.commit()
+
