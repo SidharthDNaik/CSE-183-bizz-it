@@ -16,10 +16,14 @@
        </figure>
       <div class="section">
         <h1 class="title is-size-1">Bizzit</h1>
-        <p class="subtitle is-size-6">
-          A place for small businesses to grow.
-       </p>
       </div>
+     </div>
+     <div class="level-right ">
+      <!-- <p class="subtitle is-size-6 is-italic"> -->
+      <p class="subtitle is-size-6">
+        A place for small businesses to grow.
+     </p>
+     </div>
      
     </nav>
 
@@ -52,79 +56,7 @@
         </div>
       </div>
 
-      <!-- <td class="is-tight">
-        <div class="file is-info">
-          <label class="file-label">
-            <input class="file-input" type="file"
-                  accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                   @change="upload_file($event, r._idx)">
-            <span class="file-cta">
-              <span class="file-label">
-                <span><i class="fa fa-upload"></i></span>
-              </span>
-            </span>
-          </label>
-        </div>
-      </td> -->
       
-      <!-- <div>
-        <p class="control">
-          <div class="file is-info">
-            <label class="file-label">
-              <input class="file-input" type="file"
-                     accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                     @change="upload_file($event, r._idx)">
-              <span class="file-cta">
-                <span class="file-label">
-                  <span><i class="fa fa-upload"></i></span>
-                </span>
-              </span>
-            </label>
-          </div>
-        </p>
-      </div> -->
-
-      <!-- code to add images to posts -->
-      <div class="section" id="vue-target" v-cloak>
-        <div v-if="!selection_done" class="field has-addons block">
-          <p class="control">
-            <div class="file is-info">
-              <label class="file-label">
-                <input class="file-input" type="file"
-                       accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                       @change="select_file($event)"
-                       @change="upload_file($event, r._idx)">
-                <span class="file-cta">
-                  <span class="file-label">
-                    <span>Add Image to Post</span>
-                  </span>
-                </span>
-              </label>
-            </div>
-          </p>
-        </div>
-        <template v-if="selection_done && !uploaded">
-          <div class="block">
-            <img width="400" :src="img_url" />
-          </div>
-          <div class="block">
-            <button class="button is-success" :disabled="uploading" @click="upload_file">
-              <span class="icon is-small">
-                <i v-if="!uploading" class="fa fa-upload"></i>
-                <i v-if="uploading" class="fa fa-spinner fa-pulse fa-fw"></i>
-              </span>
-              <span>Upload</span>
-            </button>
-          </div>
-        </template>
-        <div v-if="uploaded">
-          <i class="fa fa-check"></i> Uploaded!
-        </div>
-      </div>
-      
-
-
-
       <div class="field">
         <div class="control">
           <input type="submit" @click="add_post" value="Post" class="button is-primary">
@@ -139,42 +71,34 @@
   <div class="container block">
     <table class="table is-striped is-fullwidth">
       <div v-for="r in rows.slice().reverse()" class="box">
-
         
-
-        <!-- <img v-if="r.thumbnail" :src="r.thumbnail"/> -->
-        <!-- <img v-if="r.thumbnail" width="50" :src="r.thumbnail" /> -->
-
-        <!-- <div v-if="r.image" class="box">
-          <img width="100" :src="r.image" />
-        </div> -->
-
-        <!-- <td class="is-tight">
-          <div class="file is-info">
-            <label class="file-label">
-              <input class="file-input" type="file"
-                     accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                     @change="upload_file($event, r._idx)">
-              <span class="file-cta">
-                <span class="file-label">
-                  <span><i class="fa fa-upload"></i></span>
-                </span>
-              </span>
-            </label>
+        <div style="float:right;">
+          <div v-if="r.email === '[[=email]]'">
+            <div v-if="!r.thumbnail">
+              <p class="control">
+                <div class="file is-info">
+                  <label class="file-label">
+                    <input class="file-input" type="file"
+                           accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                           @change="upload_file($event, r._idx)">
+                    <span class="file-cta">
+                      <span class="file-label">
+                        <span><i class="fa fa-upload"></i></span>
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              </p>
+            </div>
+  
           </div>
-        </td>
-        <td class="is-tight">
-          <div v-if="r.image" class="box">
-            <img width="100" :src="r.image" />
-          </div>
-        </td> -->
         
-        <div v-if="r.email === '[[=email]]'">
-          <div class="block">
-            <img width="400" :src="img_url" />
-          </div>
         </div>
-        
+
+        <div class="content">
+
+          <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
+        </div>
         <div class="content is-medium">
             <p>
               {{r.content}}
@@ -188,9 +112,16 @@
 
           <div style="float:right;">
             <div v-if="r.email === '[[=email]]'">
+
+              
               <button @click="delete_post(r._idx)" class="button is-danger">
                 <i class="fa fa-trash"></i>
               </button>
+
+              <!-- <button @click="edit_post(r._idx)" class="button is-danger">
+                <i class="fa fa-fw fa-pencil"></i>
+              </button> -->
+              
             </div>
           </div>
 
@@ -314,7 +245,6 @@
   let set_likes_url = "[[=XML(set_likes_url)]]";
   let get_likes_url = "[[=XML(get_likes_url)]]";
   let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
-  let file_upload_url = "[[=XML(file_upload_url)]]";
   let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
 </script>
 <script src="js/index.js"></script>

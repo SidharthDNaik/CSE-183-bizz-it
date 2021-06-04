@@ -20,6 +20,7 @@ let init = (app) => {
         uploaded_file: "",
         uploaded: false,
         img_url: "",
+        add_mode: false,
     };
 
     // This is the file selected for upload.
@@ -52,69 +53,52 @@ let init = (app) => {
         app.vue.uploaded = true;
     };
 
-    app.upload_file = function () {
-        if (app.file) {
-            let file_type = app.file.type;
-            let file_name = app.file.name;
-            let full_url = file_upload_url + "&file_name=" + encodeURIComponent(file_name)
-                + "&file_type=" + encodeURIComponent(file_type);
-            // Uploads the file, using the low-level streaming interface. This avoid any
-            // encoding.
-            app.vue.uploading = true;
-            let req = new XMLHttpRequest();
-            req.addEventListener("load", function () {
-                app.upload_complete(file_name, file_type)
-            });
-            req.open("PUT", full_url, true);
-            req.send(app.file);
-        }
+    app.start_edit = function (row_idx, fn) {
+        let row = app.vue.rows[row_idx];
+        app.vue.rows[row_idx]._state[fn] = "edit";
     };
 
-    // app.upload_file = function (event, row_idx) {
-    //     let input = event.target;
-    //     let file = input.files[0];
-    //     let row = app.vue.rows[row_idx];
-    //     if (file) {
-    //         let reader = new FileReader();
-    //         reader.addEventListener("load", function () {
-    //             // Sends the image to the server.
-    //             axios.post(upload_thumbnail_url,
-    //                 {
-    //                     post_id: row.id,
-    //                     thumbnail: reader.result,
-    //                 })
-    //                 .then(function () {
-    //                     // Sets the local preview.
-    //                     row.thumbnail = reader.result;
+    app.stop_edit = function (row_idx, fn) {
+        let row = app.vue.rows[row_idx];
+        if (row._state[fn] === "edit") {
+            row._state[fn] = "pending";
+            axios.post(edit_post_url,
+                {
+                    id: row.id,
+                    field: fn,
+                    value: row[fn], // row.first_name
+                }).then(function (result) {
+                row._state[fn] = "clean";
+            });
+        }
+        // If I was not editing, there is nothing that needs saving.
+    }
 
-    //                 });
-    //         });
-    //         reader.readAsDataURL(file);
-    //     }
-    // };
+    app.upload_file = function (event, row_idx) {
+        let input = event.target;
+        let file = input.files[0];
+        let row = app.vue.rows[row_idx];
+        if (file) {
+            let reader = new FileReader();
+            reader.addEventListener("load", function () {
+                // Sends the image to the server.
+                axios.post(upload_thumbnail_url,
+                    {
+                        post_id: row.id,
+                        thumbnail: reader.result,
+                        
+                    })
+                    .then(function () {
+                        // Sets the local preview.
+                        row.thumbnail = reader.result;
 
-    // app.upload_file = function (event, row_idx) {
-    //     let input = event.target;
-    //     let file = input.files[0];
-    //     let row = app.vue.rows[row_idx];
-    //     if (file) {
-    //         let reader = new FileReader();
-    //         reader.addEventListener("load", function () {
-    //             // Sends the image to the server.
-    //             let image = reader.result;
-    //             axios.post(upload_url,
-    //                 {
-    //                     post_id: row.id,
-    //                     image: image,
-    //                 })
-    //                 .then(function () {
-    //                     // Sets the local preview.
-    //                     row.image = image;
-    //                 });
-    //         });
-    //         reader.readAsDataURL(file);
-    //     }
-    // };
+                    });
+            });
+            reader.readAsDataURL(file);
+        }
+
+        app.vue.rows = rows;
+    };
 
 
     app.likeable = (a) => {
@@ -286,6 +270,8 @@ let init = (app) => {
                         });
                     }
                 });
+
+            // app.vue.rows = rows;
     };
 
     // Call to the initializer.

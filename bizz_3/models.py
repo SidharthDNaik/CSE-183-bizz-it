@@ -49,9 +49,6 @@ db.define_table('posts',
                     Field(
                         'thumbnail','text'
                     ),
-                    Field(
-                        'image', 'text'
-                    )
                )
 
 db.define_table('likes',
