@@ -193,6 +193,11 @@ success!
 success!
 success!
 success!
+<<<<<<< HEAD
+=======
+timestamp: 2021-06-02T23:29:59.486191
+ALTER TABLE "posts" ADD "thumbnail" CHAR(512);
+>>>>>>> origin/Neelam
 success!
 success!
 success!
@@ -205,6 +210,8 @@ success!
 success!
 success!
 success!
+timestamp: 2021-06-03T01:23:54.480239
+ALTER TABLE "posts" ADD "image" TEXT;
 success!
 success!
 success!
@@ -237,6 +244,8 @@ success!
 success!
 success!
 success!
+timestamp: 2021-06-03T18:19:15.637262
+ALTER TABLE "posts" ADD "title" CHAR(512);
 success!
 success!
 success!
@@ -308,6 +317,8 @@ success!
 success!
 success!
 success!
+timestamp: 2021-06-03T18:57:55.110227
+ALTER TABLE "posts" ADD "location" CHAR(512);
 success!
 success!
 success!

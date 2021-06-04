@@ -40,6 +40,7 @@ url_signer = URLSigner(session)
 @action.uses(auth, url_signer, 'index.html')
 def index():
     show_delete = db.auth_user.email == get_user_email()
+    
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
@@ -52,6 +53,8 @@ def index():
         add_post_url = URL('add_post', signer=url_signer),
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
+        upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
+       
     )
 
 # This is our very first API function.
@@ -69,7 +72,9 @@ def add_post():
     name = get_name()
     email = get_user_email()
     id = db.posts.insert(
+        title=request.json.get('title'),
         content=request.json.get('content'),
+        location=request.json.get('location'),
         name=name,
         email = email,
     )
@@ -200,3 +205,11 @@ def search():
     return dict(rows=rows)
     
 
+
+@action('upload_thumbnail', method="POST")
+@action.uses(url_signer.verify(), db)
+def upload_thumbnail():
+    post_id = request.json.get("post_id")
+    thumbnail = request.json.get("thumbnail")
+    db(db.posts.id == post_id).update(thumbnail=thumbnail)
+    return "ok"
