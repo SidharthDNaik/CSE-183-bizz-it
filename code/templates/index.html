@@ -62,12 +62,12 @@
 
   <div v-if="post_mode" class="container block">
     <div class="form">
-      <p class="subtitle is-size-4 has-text-primary">
-        New Post:
-     </p>
-
       <!-- This looks like a form, but is not.  We just need the inputs. -->
       <div class="field">
+
+        <p class="subtitle is-size-4 has-text-primary">
+          New Post:
+       </p>
 
         <div class="container block">
           <div class="control">
@@ -102,7 +102,7 @@
       <div class="field">
         <div class="control">
           <input type="submit" @click="add_post" value="Post" class="button is-primary">
-          <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning">
+          <input type="submit" @click="set_add_status(false)" value="Cancel" class="button is-warning">
         </div>
       </div>
 

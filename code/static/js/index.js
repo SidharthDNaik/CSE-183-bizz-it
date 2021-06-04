@@ -154,7 +154,9 @@ let init = (app) => {
                     });
                     app.enumerate(app.vue.rows);
                     app.reset_form();
-                    app.set_post_status;
+                    
+                    app.set_post_status(false);
+                    app.set_add_status(false);
                 });
     };
 
@@ -181,6 +183,10 @@ let init = (app) => {
                 }
             }
         });
+    };
+
+    app.set_add_status = function (new_status) {
+        app.vue.add_mode = new_status;
     };
 
     app.set_post_status = function (new_status) {
@@ -249,6 +255,7 @@ let init = (app) => {
     app.methods = {
         add_post: app.add_post,
         set_post_status: app.set_post_status,
+        set_add_status: app.set_add_status,
         delete_post: app.delete_post,
         set_hover: app.set_hover,
         set_likes: app.set_likes,
