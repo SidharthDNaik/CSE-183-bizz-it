@@ -10,6 +10,38 @@
 
   <div class="container block">
     <h1 class="title">Bizzit</h1>
+    <div class="columns block">
+      <div class="column">
+        <p class="control has-icons-right">
+          <input class="input" type="text" v-model="post_search" @keyup="search"/>
+          <span class="icon is-small is-right">
+            <i class="fa fa-search"></i>
+          </span>
+        </p>
+      </div>
+      <div class="column is-narrow">
+        <button class="button" @click="clear_search">
+          <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
+        </button>
+      </div>
+    </div>
+
+    <div class="container">
+      <nav class="level">
+        <div class="level-item has-text-centered">
+          <a class="button" href="[[=URL('index')]]">
+            <span>Feed</span>
+          </a>
+          <a class="button" href="[[=URL('explore')]]">
+            <span>Explore Map</span>
+          </a>
+          <a class="button" href="[[=URL('profile')]]">
+            <span>Profile</span>
+          </a>
+        </div>
+      </nav>
+     
+    </div>
     <div class="container block">
         <!-- Return user name -->
       [[if email:]]
@@ -50,6 +82,12 @@
 
   <div class="container block">
     <table class="table is-striped is-fullwidth">
+      <!--
+      <span v-if="search_mode===true">
+        
+      <div v-for="p in posts_list" class="box">{{p}}
+      <div v-for="r in rows.slice().reverse()" class="box">
+      -->
       <div v-for="r in rows.slice().reverse()" class="box">
         <div class="content is-medium">
             <p>
@@ -69,7 +107,7 @@
               </button>
             </div>
           </div>
-
+        </span>
           <div stlye="padding-bottom: 5px">
             <!-- if email you can like -->
             [[if email:]]
@@ -154,7 +192,6 @@
       </div>
     </table>
   </div>
-
 </div>
 
 
@@ -168,6 +205,7 @@
   let set_likes_url = "[[=XML(set_likes_url)]]";
   let get_likes_url = "[[=XML(get_likes_url)]]";
   let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
+  let search_url = "[[=XML(search_url)]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]

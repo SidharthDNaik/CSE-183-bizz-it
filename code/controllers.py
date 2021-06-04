@@ -30,6 +30,9 @@ from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_name
+import uuid 
+import random 
+import gmaps
 
 url_signer = URLSigner(session)
 
@@ -48,6 +51,7 @@ def index():
         load_posts_url = URL('load_posts', signer=url_signer),
         add_post_url = URL('add_post', signer=url_signer),
         delete_post_url = URL('delete_post', signer=url_signer),
+        search_url = URL('search', signer=url_signer),
     )
 
 # This is our very first API function.
@@ -147,6 +151,20 @@ def get_likes_stream():
 @action('explore')
 @action.uses(auth.user, url_signer, 'explore.html')
 def explore():
+    gmaps.configure(api_key='AIzaSyCMP2HhPC0Eu8LM8m4WmmI-4JEDZQjj2jA')
+
+    marker_locations=[
+    (-34.0, -59.166672),
+    (-32.23333, -64.433327),
+    (40.166672, 44.133331),
+    (51.216671, 5.0833302),
+    (51.333328, 4.25)
+    ]
+
+    fig = gmaps.figure()
+    markers = gmaps.marker_layer(marker_locations)
+    fig.add_layer(markers)
+    fig
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
@@ -162,3 +180,23 @@ def profile():
         email=get_user_email(),
         name=get_name(),
     )   
+
+@action('search')
+@action.uses(db, url_signer.verify())
+def search():
+    t = request.params.get('q')
+    if t:
+        tt = t.strip()
+        
+        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)))
+        
+    else: 
+        q = db.posts.id > 0
+
+    #posts_list = db(q).select(db.posts.ALL).as_list()
+    rows = db(q).select().as_list()
+    #print(rows)
+
+    return dict(rows=rows)
+    
+
