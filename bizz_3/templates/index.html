@@ -128,22 +128,54 @@
 
               <br>
 
-              <div style="padding-bottom: 10px;">
+              <div style="overflow-y: scroll; padding-top: 10px; padding-bottom: 10px; max-height: 400px; display: flex; flex-direction: column-reverse;">
 
-                <div>Sidharth Naik: Wow great post </div> 
+                <span v-for="(c, index) in r.comments">
 
-                <div>S N: Love this post</div>
+                    <span v-if="index == r.comments.length - 1">
+                      <div style="padding-bottom: 20px;">
+                        <div style="padding-top: 15px;">
+                          {{c['comment_content']}}
+                        </div>
+                      </div> 
+                    </span>
+
+                    <span v-else>
+                      <div style="padding-bottom: 20px; border-top-style: solid; border-width: .5px; border-color: lightgray;">
+                        <div style="padding-top: 15px;">
+                          {{c['comment_content']}}
+                        </div>
+                      </div> 
+                    </span>
+
+                    [[if email:]]
+
+                    <div style="float:right;">
+                      <div v-if="c['email'] === '[[=email]]'">
+                        <button @click="" class="button is-danger">
+                          <i class="fa fa-trash"></i>
+                        </button>
+                      </div>
+                    </div>
+
+                    [[pass]]
+
+
+                    
+                </span>
 
               </div>  
 
-              <div>
-
-                <div style="float: left; width: 94%;">
-                  <input class="input" type="text" placeholder="Type here to enter comment">
+              [[if email:]]
+                <div style="padding-top: 20px; display: flex;">
+                  <div style="flex: 20; padding-right: 10px">
+                  <input v-model="r.comment" class="input" type="text" placeholder="Type here to enter comment">
+                  </div>
+                  <div style="flex: 1;">
+                    <input type="submit" @click="add_comment(r._idx)" value="Post" class="button is-primary">
+                  </div>
                 </div>
-                <input type="submit" @click=" " value="Post" class="button is-primary">
-
-              </div>
+              [[pass]]
 
               <br>
 
@@ -167,7 +199,9 @@
   let user_name = "[[=name]]";
   let set_likes_url = "[[=XML(set_likes_url)]]";
   let get_likes_url = "[[=XML(get_likes_url)]]";
+  let add_comment_url = "[[=XML(add_comment_url)]]";
   let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
+  let get_comments_stream_url = "[[=XML(get_comments_stream_url)]]"
 </script>
 <script src="js/index.js"></script>
 [[end]]

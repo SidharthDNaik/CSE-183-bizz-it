@@ -48,6 +48,8 @@ def index():
         load_posts_url = URL('load_posts', signer=url_signer),
         add_post_url = URL('add_post', signer=url_signer),
         delete_post_url = URL('delete_post', signer=url_signer),
+        add_comment_url = URL('add_comment', signer=url_signer),
+        get_comments_stream_url = URL('get_comments_stream', signer=url_signer),
     )
 
 # This is our very first API function.
@@ -97,6 +99,41 @@ def get_likes():
         like_type=like_type
     )
 
+@action('delete_comment')
+@action.uses(auth, url_signer.verify(), db)
+def delete_comment():
+    id = request.params.get('id')
+    assert id is not None
+    db.(db.comments.id == id).delete()
+    return "ok"
+
+@action('add_comment', method='POST')
+@action.uses(auth, url_signer.verify(), db)
+def add_comment():
+    post_id = request.json.get('post_id')
+    commenter = request.json.get('commenter')
+    t_comment = request.json.get('comment')
+    assert post_id is not None and t_comment is not None
+    comment_content = commenter + ": " + t_comment
+    email = get_user_email()
+    print(post_id)
+    print(commenter)
+    print(comment_content)
+    db.comments.insert(
+        post_id = post_id,
+        commenter = commenter,
+        comment_content = comment_content,
+        email = email,
+    )
+    rows = db(
+                (db.comments.post_id == post_id)
+    ).select().as_list()
+    return dict(
+        rows=rows,
+        email = email,
+    )
+
+
 @action('set_likes', method='POST')
 @action.uses(url_signer.verify(), db)
 def set_likes():
@@ -114,6 +151,25 @@ def set_likes():
         post_id=post_id,
     )
     return "yeet"
+
+@action('get_comments_stream')
+@action.uses(url_signer.verify(), db)
+def get_comments_stream():
+    post_id = request.params.get('post_id')
+    commenter = request.params.get('commenter')
+    rows = db(
+                (db.comments.post_id == post_id) &
+                (db.comments.commenter != commenter)
+            ).select().as_list()
+    number_of_comments = 0
+    comments = []
+    i = 0
+    for r in rows:
+        comments.append(r)
+    return dict(
+        number_of_comments = number_of_comments,
+        comments = [ele for ele in reversed(comments)],
+    )
 
 @action('get_likes_stream')
 @action.uses(url_signer.verify(), db)
