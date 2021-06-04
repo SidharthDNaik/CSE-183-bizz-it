@@ -6,10 +6,57 @@
 }
 </style>
 
-<div class="section" id="vue-target" v-cloak>
+<div class="section"style=background-color:rgb(164,215,236); id="vue-target" v-cloak>
+
+  <div class="container">
+    <div class="box" style=background-color:rgb(255,254,211);>
+       <!-- Main container -->
+       <nav class="level">
+          <!-- Left side -->
+          <div class="level-left">
+            <figure class="image is-128x128 ">
+              <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
+           </figure>
+           <div class="section">
+            <h1 class="title is-size-1 " style=color:rgb(85,83,83);>Bizzit</h1>
+          </div>
+          </div>
+
+          <div class="level-middle">
+            <div class="columns block">
+              <div class="column">
+                <p class="control has-icons-right">
+                  <input class="input" type="text" v-model="post_search" @keyup="search"/>
+                  <span class="icon is-small is-right">
+                    <i class="fa fa-search"></i>
+                  </span>
+                </p>
+              </div>
+              <div class="column is-narrow">
+                <button class="button" @click="clear_search">
+                  <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+          
+          
+          <!-- Right side -->
+          <div class="level-right">
+            <p class="subtitle is-size-5">
+              A place for small businesses to grow.
+           </p>
+          </div>
+
+          
+       </nav>
+    </div>
+ </div>
 
   <div class="container block">
-    <nav class="level">
+
+    <!-- <nav class="level">
       <div class="level-left">
         <figure class="image is-128x128 ">
           <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
@@ -24,8 +71,9 @@
      </p>
      </div>
      
-    </nav>
-    <div class="columns block">
+    </nav> -->
+
+    <!-- <div class="columns block">
       <div class="column">
         <p class="control has-icons-right">
           <input class="input" type="text" v-model="post_search" @keyup="search"/>
@@ -39,13 +87,22 @@
           <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
         </button>
       </div>
-    </div>
+    </div> -->
 
     <div class="container block">
         <!-- Return user name -->
       [[if email:]]
       <!-- the user is logged in -->
-        Welcome, [[=name]].
+      <div class="container block">
+        <div class="box is-narrow" style=background-color:rgb(252,180,174);> 
+
+        Welcome, [[=name]]!
+        
+        </div>
+        
+
+      </div>
+        
       [[else:]]
       <!-- the user is not logged in -->
         Log in to post and like.
@@ -53,7 +110,7 @@
     </div>
     [[if email:]]
     <div v-if="!post_mode">
-      <button @click="set_post_status(true)" class="button is-primary">
+      <button @click="set_post_status(true)" class="button is-primary is-light" >
         <i class="fa fa-plus fa-fw"></i> 
       </button>
     </div>
@@ -61,52 +118,56 @@
   </div>
 
   <div v-if="post_mode" class="container block">
-    <div class="form">
-      <!-- This looks like a form, but is not.  We just need the inputs. -->
-      <div class="field">
 
-        <p class="subtitle is-size-4 has-text-primary">
-          New Post:
-       </p>
-
-        <div class="container block">
-          <div class="control">
-            <p class="subtitle is-size-5">
-              Title:
-           </p>
-            <input class="input is-info" type="text" v-model="add_title" placeholder="Enter a title for your post here">
+    <div class="box" style=background-color:rgb(255,254,211);>
+      <div class="form">
+        <!-- This looks like a form, but is not.  We just need the inputs. -->
+        <div class="field">
+  
+          <p class="subtitle is-size-4 has-text-black">
+            New Post:
+         </p>
+  
+          <div class="container block">
+            <div class="control">
+              <p class="subtitle is-size-5">
+                Title:
+             </p>
+              <input class="input is-info" type="text" v-model="add_title" placeholder="Enter a title for your post here">
+            </div>
           </div>
+          
+          <div class="container block">
+            <div class="control">
+              <p class="subtitle is-size-5">
+                Caption:
+             </p>
+              <textarea class="textarea is-info" v-model="add_content" class="textarea" placeholder="Enter post caption here"></textarea>
+            </div>
+          </div>
+  
+          <div class="container block">
+            <div class="control">
+              <p class="subtitle is-size-5">
+                Location:
+             </p>
+              <input class="input is-primary" type="text" v-model="add_location" placeholder="Enter your small business' address here">
+            </div>
+          </div>
+          
         </div>
+  
         
-        <div class="container block">
+        <div class="field">
           <div class="control">
-            <p class="subtitle is-size-5">
-              Caption:
-           </p>
-            <textarea class="textarea is-info" v-model="add_content" class="textarea" placeholder="Enter post caption here"></textarea>
+            <input type="submit" @click="add_post" value="Post" class="button is-primary">
+            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning">
           </div>
         </div>
-
-        <div class="container block">
-          <div class="control">
-            <p class="subtitle is-size-5">
-              Location:
-           </p>
-            <input class="input is-primary" type="text" v-model="add_location" placeholder="Enter your small business' address here">
-          </div>
-        </div>
-        
+  
       </div>
-
-      
-      <div class="field">
-        <div class="control">
-          <input type="submit" @click="add_post" value="Post" class="button is-primary">
-          <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning">
-        </div>
-      </div>
-
     </div>
+    
   </div>
 
 
@@ -270,26 +331,31 @@
     </table>
   </div>
 </div>
+  
 
-    <div class="container block">
+</div>
+  <div class="box" style=background-color:rgb(164,215,236);> 
+
+    <div class="container block" style=background-color:rgb(164,215,236);>
       <nav class="level">
         <div class="level-left">
           <figure class="image is-96x96 ">
             <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
          </figure>
         <div class="section">
-          <h1 class="title">Bizzit</h1>
+          <h1 class="title is-size-3" style=color:white;>Bizzit</h1>
         </div>
        </div>
        <div class="level-right ">
-        <p class="subtitle is-size-6">
+        <p class="text is-size-6" style=color:white;>
           A place for small businesses to grow.
        </p>
        </div>
       </nav>
-  
-  
     </div>
+  
+  </div>
+
 
 [[block page_scripts]]
 <!-- Loads the index-specific js for Vue -->
