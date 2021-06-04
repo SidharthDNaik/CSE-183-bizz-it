@@ -1,0 +1,292 @@
+[[extend 'layout.html']]
+
+<style>
+[v-cloak] {
+     display: none;
+}
+</style>
+
+<div class="section" id="vue-target" v-cloak>
+
+  <div class="container block">
+    <nav class="level">
+      <div class="level-left">
+        <figure class="image is-128x128 ">
+          <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
+       </figure>
+      <div class="section">
+        <h1 class="title is-size-1">Bizzit</h1>
+      </div>
+     </div>
+     <div class="level-right ">
+      <!-- <p class="subtitle is-size-6 is-italic"> -->
+      <p class="subtitle is-size-6">
+        A place for small businesses to grow.
+     </p>
+     </div>
+     
+    </nav>
+
+    <div class="container block">
+        <!-- Return user name -->
+      [[if email:]]
+      <!-- the user is logged in -->
+        Welcome, [[=name]].
+      [[else:]]
+      <!-- the user is not logged in -->
+        Log in to post and like.
+      [[pass]]
+    </div>
+    [[if email:]]
+    <div v-if="!post_mode">
+      <button @click="set_post_status(true)" class="button is-primary">
+        <i class="fa fa-plus fa-fw"></i> 
+      </button>
+    </div>
+    [[pass]]
+  </div>
+
+  <div v-if="post_mode" class="container block">
+    <div class="form">
+      <p class="subtitle is-size-4 has-text-primary">
+        New Post:
+     </p>
+
+      <!-- This looks like a form, but is not.  We just need the inputs. -->
+      <div class="field">
+
+        <div class="container block">
+          <div class="control">
+            <p class="subtitle is-size-5">
+              Title:
+           </p>
+            <input class="input is-info" type="text" v-model="add_title" placeholder="Enter a title for your post here">
+          </div>
+        </div>
+        
+        <div class="container block">
+          <div class="control">
+            <p class="subtitle is-size-5">
+              Caption:
+           </p>
+            <textarea class="textarea is-info" v-model="add_content" class="textarea" placeholder="Enter post caption here"></textarea>
+          </div>
+        </div>
+
+        <div class="container block">
+          <div class="control">
+            <p class="subtitle is-size-5">
+              Location:
+           </p>
+            <input class="input is-primary" type="text" v-model="add_location" placeholder="Enter your small business' address here">
+          </div>
+        </div>
+        
+      </div>
+
+      
+      <div class="field">
+        <div class="control">
+          <input type="submit" @click="add_post" value="Post" class="button is-primary">
+          <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="container block">
+    <table class="table is-striped is-fullwidth">
+      <div v-for="r in rows.slice().reverse()" class="box">
+
+        <div class="title">
+          <p>
+            {{r.title}}
+          </p>
+        </div>
+        
+        <div style="float:right;">
+          <div v-if="r.email === '[[=email]]'">
+            <div v-if="!r.thumbnail">
+              <p class="control">
+                <div class="file is-info">
+                  <label class="file-label">
+                    <input class="file-input" type="file"
+                           accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                           @change="upload_file($event, r._idx)">
+                    <span class="file-cta">
+                      <span class="file-label">
+                        <span><i class="fa fa-upload"></i></span>
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              </p>
+            </div>
+  
+          </div>
+        
+        </div>
+
+        <div class="content">
+
+          <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
+        </div>
+        
+        <div class="content is-medium">
+            <p>
+              {{r.content}}
+            </p>
+          </div>
+          <div class="content is-small">
+            <p>
+              {{r.name}}
+            </p>
+          </div>
+          <div class="content is-small">
+            <p>
+              {{r.location}}
+            </p>
+          </div>
+
+          <div style="float:right;">
+            <div v-if="r.email === '[[=email]]'">
+
+              
+              <button @click="delete_post(r._idx)" class="button is-danger">
+                <i class="fa fa-trash"></i>
+              </button>
+
+              <!-- <button @click="edit_post(r._idx)" class="button is-danger">
+                <i class="fa fa-fw fa-pencil"></i>
+              </button> -->
+              
+            </div>
+          </div>
+
+          <div stlye="padding-bottom: 5px">
+            <!-- if email you can like -->
+            [[if email:]]
+
+              <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
+
+                  <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 1)">
+                      <i class="fa fa-flip-horizontal" :class="{
+                          'fa-heart-o': !(r.like_type === 1),
+                          'fa-heart': (r.like_type === 1),
+                          }">
+                      </i>
+                  </span>
+
+              </span>
+            <!-- Cannot like -->
+            [[else:]]
+
+              <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
+  
+                    <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)">
+                      <i class="fa fa-heart-o"></i>
+                    </span>
+  
+              </span>
+            
+            [[pass]]
+            <!-- toggle comments -->
+              <span @click="toggle_comments(r._idx)" class="icon has-text-danger">
+                <i class="fa " :class="{
+                  'fa-comment-o': !(r.comments_a_viewable),
+                  'fa-comment': (r.comments_a_viewable),
+                  }">
+                </i>
+              </span>
+
+          </div>
+
+          <span v-if="r.hover && r.number_of_likes > 0">
+              <br>
+              <span style="color:crimson" v-if="r.number_of_likes > 0">
+                  Liked by<span v-if="r.like_type === 1"> [[=name]]<span v-if="r.number_of_likes != 1">,</span></span> 
+                  <span v-for="(l, index) in r.likes">
+                    <span v-if="index === r.likes.length - 1 "> 
+                      {{l}}
+                    </span>
+                    <span v-else> 
+                      {{l}}<span>, </span>
+                    </span>
+                  </span>
+              </span>
+              <br>
+          </span>
+          
+          <span v-if="r.comments_a_viewable">
+
+              <br>
+
+              <div style="padding-bottom: 10px;">
+
+                <div>Sidharth Naik: Wow great post </div> 
+
+                <div>S N: Love this post</div>
+
+              </div>  
+
+              <div>
+
+                <div style="float: left; width: 94%;">
+                  <input class="input" type="text" placeholder="Type here to enter comment">
+                </div>
+                <input type="submit" @click=" " value="Post" class="button is-primary">
+
+              </div>
+
+              <br>
+
+          </span>
+
+        <div style="height: 15px"></div>
+
+      </div>
+    </table>
+  </div>
+
+  <div class="section" id="vue-target" v-cloak>
+
+    <div class="container block">
+      <nav class="level">
+        <div class="level-left">
+          <figure class="image is-96x96 ">
+            <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
+         </figure>
+        <div class="section">
+          <h1 class="title">Bizzit</h1>
+        </div>
+       </div>
+       <div class="level-right ">
+        <!-- <p class="subtitle is-size-6 is-italic"> -->
+        <p class="subtitle is-size-6">
+          A place for small businesses to grow.
+       </p>
+       </div>
+      </nav>
+  
+  
+    </div>
+
+</div>
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+  let add_post_url = "[[=XML(add_post_url)]]";
+  let delete_post_url = "[[=XML(delete_post_url)]]";
+  let load_posts_url = "[[=XML(load_posts_url)]]";
+  let user_name = "[[=name]]";
+  let set_likes_url = "[[=XML(set_likes_url)]]";
+  let get_likes_url = "[[=XML(get_likes_url)]]";
+  let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
+  let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
+</script>
+<script src="js/index.js"></script>
+[[end]]
+
