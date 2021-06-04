@@ -34,7 +34,7 @@ from .models import get_user_email, get_name
 url_signer = URLSigner(session)
 
 @action('index')
-@action.uses(auth, url_signer, 'index.html')
+@action.uses(auth.user, url_signer, 'index.html')
 def index():
     show_delete = db.auth_user.email == get_user_email()
     return dict(
@@ -145,7 +145,7 @@ def get_likes_stream():
 
 # This controller is used to go to the explore map page
 @action('explore')
-@action.uses(auth, url_signer, 'explore.html')
+@action.uses(auth.user, url_signer, 'explore.html')
 def explore():
     return dict(
         # This is the signed URL for the callback.
@@ -155,7 +155,7 @@ def explore():
 
 # This controller is used to initialize the database.
 @action('profile')
-@action.uses(auth, url_signer, 'profile.html')
+@action.uses(auth.user, url_signer, 'profile.html')
 def profile():
     return dict(
         # This is the signed URL for the callback.
