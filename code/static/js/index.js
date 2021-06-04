@@ -95,6 +95,7 @@ let init = (app) => {
                     })
                     .then(function () {
                         // Sets the local preview.
+                        // let row = app.vue.rows[row_idx];
                         row.thumbnail = reader.result;
 
                     });
@@ -102,6 +103,7 @@ let init = (app) => {
             reader.readAsDataURL(file);
         }
 
+        row = app.vue.rows[row_idx];
         app.vue.rows = rows;
     };
 
@@ -131,13 +133,13 @@ let init = (app) => {
         return a;
     };
 
-
     app.add_post = function () {
         axios.post(add_post_url,
             {
                 title: app.vue.add_title,
                 content: app.vue.add_content,
                 location: app.vue.add_location,
+                thumbnail: app.vue.add_thumbnail,
             }).then(
                 function (response){
                     app.vue.rows.push({
@@ -145,6 +147,7 @@ let init = (app) => {
                         title: app.vue.add_title,
                         content: app.vue.add_content,
                         location: app.vue.add_location,
+                        thumbnail: app.vue.add_thumbnail,
                         name: response.data.name,
                         email: response.data.email,
                         number_of_likes: 0,

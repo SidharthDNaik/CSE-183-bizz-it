@@ -190,9 +190,10 @@ def search():
 
 
 @action('upload_thumbnail', method="POST")
-@action.uses(url_signer.verify(), db)
+@action.uses(auth, url_signer.verify(), db)
 def upload_thumbnail():
     post_id = request.json.get("post_id")
     thumbnail = request.json.get("thumbnail")
     db(db.posts.id == post_id).update(thumbnail=thumbnail)
+    redirect(URL('index'))
     return "ok"
