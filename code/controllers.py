@@ -69,10 +69,53 @@ def load_posts():
     return dict(
         rows= rows,
         )
-
-@action('add_post', method='POST')
+@action('add_post', method=["POST"])
 @action.uses(auth, url_signer.verify(), db)
 def add_post():
+    name = get_name()
+    email = get_user_email()
+    if(request.json.get('title') != "" and request.json.get('content') != "" and request.json.get('location') != "" and request.json.get('category') != ""):
+        id = db.posts.insert(
+            title=request.json.get('title'),
+            content=request.json.get('content'),
+            location=request.json.get('location'),
+            category=request.json.get('category'),
+            name=name,
+            email = email,
+        )
+        return dict(
+            id=id,
+            name=name,
+            email=email,
+        )
+    else:
+        print("You must fill all the fields to post!")
+        id = request.params.get('id')
+        assert id is not None
+        db(db.posts.id == id).delete()
+        return "failed to post"
+    # name = get_name()
+    # email = get_user_email()
+    # id = db.posts.insert(
+    #     title=request.json.get('title'),
+    #     content=request.json.get('content'),
+    #     location=request.json.get('location'),
+    #     category=request.json.get('category'),
+    #     name=name,
+    #     email = email,
+    # )
+    # redirect(URL('index'))
+    # return dict(
+    #     id=id,
+    #     name=name,
+    #     email=email,
+    # )
+
+@action('add_post_new', method=["GET", "POST"])
+@action.uses(db, session, auth.user, 'add_post.html')
+def add_post_new():
+    form = Form(db.posts, csrf_session=session, formstyle=FormStyleBulma)
+
     name = get_name()
     email = get_user_email()
     id = db.posts.insert(
@@ -83,11 +126,21 @@ def add_post():
         name=name,
         email = email,
     )
+    redirect(URL('index'))
     return dict(
         id=id,
         name=name,
         email=email,
+        form=form
     )
+    # #Insert form: no records in it
+    # form = Form(db.posts, csrf_session=session, formstyle=FormStyleBulma)
+    # if form.accepted:
+    #     #redirect, the insertion already happened
+    #     redirect(URL('index')) #go back to index after insertion
+
+    # #Either this is a GET request, or this is a POST but not accepted = with errors
+    # return dict(form=form)
 
 @action('delete_post')
 @action.uses(auth, url_signer.verify(), db)
@@ -225,16 +278,3 @@ def upload_thumbnail():
     db(db.posts.id == post_id).update(thumbnail=thumbnail)
     redirect(URL('index'))
     return "ok"
-
-
-@action('add_post_new', method=["GET", "POST"])
-@action.uses(db, session, auth.user, 'add_post.html')
-def add_post_new():
-    #Insert form: no records in it
-    form = Form(db.posts, csrf_session=session, formstyle=FormStyleBulma)
-    if form.accepted:
-        #redirect, the insertion already happened
-        redirect(URL('index')) #go back to index after insertion
-
-    #Either this is a GET request, or this is a POST but not accepted = with errors
-    return dict(form=form)

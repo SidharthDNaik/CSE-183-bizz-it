@@ -74,20 +74,20 @@ div.pac-container {
     </div>
     [[if email:]]
     <div v-if="!post_mode">
-      <!-- <button @click="set_post_status(true)" class="button is-primary is-light" >
+      <button @click="set_post_status(true)" class="button is-primary is-light" >
         <i class="fa fa-plus fa-fw"></i> 
-      </button> -->
+      </button>
     </div>
     [[pass]]
   </div>
 
-  <div class="container block">
+  <!-- <div class="container block">
 
     <a class="button is-primary is-light" href="[[=URL('add_post_new', signer=url_signer)]]">
       <i class="fa fa-plus fa-fw"></i> 
    </a>
 
-  </div>
+  </div> -->
 
   <div v-if="post_mode" class="container block">
 
@@ -96,8 +96,8 @@ div.pac-container {
         <!-- This looks like a form, but is not.  We just need the inputs. -->
         <div class="field">
   
-          <p class="subtitle is-size-4 has-text-black">
-            New Post:
+          <p class="title is-size-4 has-text-black">
+            New Post
          </p>
   
           <div class="container block">
@@ -132,24 +132,31 @@ div.pac-container {
               Category:
             </p>
             <div class="is-grouped">
-                <button @click="get_category('Restaurants')" class="button is-link is-outlined">Restaurants</button>
-                <button @click="get_category('Bakeries')" class="button is-link is-outlined">Bakeries</button>
-                <button @click="get_category('Clothing')" class="button is-link is-outlined">Clothing</button>
-                <button @click="get_category('Art')" class="button is-link is-outlined">Art</button>
-                <button @click="get_category('Home')" class="button is-link is-outlined">Home</button>
-                <button @click="get_category('Beauty')" class="button is-link is-outlined">Beauty</button>
-                <button @click="get_category('Services')" class="button is-link is-outlined">Services</button>
-                <button @click="get_category('Other')" class="button is-link is-outlined">Other</button>
+                <button @click="get_category('Restaurants')" class="button is-link is-light is-outlined">Restaurants</button>
+                <button @click="get_category('Bakeries')" class="button is-link is-light is-outlined">Bakeries</button>
+                <button @click="get_category('Clothing')" class="button is-link is-light is-outlined">Clothing</button>
+                <button @click="get_category('Art')" class="button is-link is-light is-outlined">Art</button>
+                <button @click="get_category('Home')" class="button is-link is-light is-outlined">Home</button>
+                <button @click="get_category('Beauty')" class="button is-link is-light is-outlined">Beauty</button>
+                <button @click="get_category('Services')" class="button is-link is-light is-outlined">Services</button>
+                <button @click="get_category('Other')" class="button is-link is-light is-outlined">Other</button>
             </div>
           </div>
           
+        </div>
+
+        <div class="notification is-danger is-light">
+          <span class="icon is-light">
+            <i class="fa fa-flag-o"></i>
+          </span>
+          <strong>*Note:</strong> You must fill all fields in order to post.
         </div>
         
         
         <div class="field">
           <div class="control">
-            <input type="submit" @click="add_post" value="Post" class="button is-primary">
-            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning">
+            <input type="submit" @click="add_post" value="Post" class="button is-primary is-light">
+            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-danger is-light">
           </div>
         </div>
   
