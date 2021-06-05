@@ -47,39 +47,6 @@
 
   <div class="container block">
 
-    <!-- <nav class="level">
-      <div class="level-left">
-        <figure class="image is-128x128 ">
-          <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
-       </figure>
-      <div class="section">
-        <h1 class="title is-size-1">Bizzit</h1>
-      </div>
-     </div>
-     <div class="level-right ">
-      <p class="subtitle is-size-6">
-        A place for small businesses to grow.
-     </p>
-     </div>
-     
-    </nav> -->
-
-    <!-- <div class="columns block">
-      <div class="column">
-        <p class="control has-icons-right">
-          <input class="input" type="text" v-model="post_search" @keyup="search"/>
-          <span class="icon is-small is-right">
-            <i class="fa fa-search"></i>
-          </span>
-        </p>
-      </div>
-      <div class="column is-narrow">
-        <button class="button" @click="clear_search">
-          <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
-        </button>
-      </div>
-    </div> -->
-
     <div class="container block">
         <!-- Return user name -->
       [[if email:]]
@@ -106,9 +73,6 @@
     [[pass]]
   </div>
 
-
-
-
   <div class="container block">
     <table class="table is-striped is-fullwidth">
       <!--
@@ -117,7 +81,8 @@
       <div v-for="p in posts_list" class="box">{{p}}
       <div v-for="r in rows.slice().reverse()" class="box">
       -->
-      <div v-for="r in rows.slice().reverse()" class="box">
+      <div v-for="r in rows.slice().reverse()" class="box"v-if="r.email === '[[=email]]'">
+    
 
         <div class="title">
           <p>

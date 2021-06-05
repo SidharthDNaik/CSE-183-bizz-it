@@ -153,7 +153,7 @@ def get_likes_stream():
 
 # This controller is used to go to the explore map page
 @action('explore')
-@action.uses(auth, url_signer, 'explore.html')
+@action.uses(auth.user, url_signer, 'explore.html')
 def explore():
   
     return dict(
@@ -167,7 +167,7 @@ def explore():
 @action.uses(auth.user, url_signer, 'profile.html')
 def profile():
     show_delete = db.auth_user.email == get_user_email()
-    
+
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
@@ -181,8 +181,8 @@ def profile():
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
         upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
-       
     ) 
+
 
 # About Bizzit page
 @action('about')
