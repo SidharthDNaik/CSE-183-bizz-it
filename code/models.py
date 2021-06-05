@@ -37,17 +37,21 @@ db.define_table('posts',
                         'string',
                         default = get_name,
                     ),
-                    Field(
-                        'content',
-                        'string',
-                    ),
+                    
                     Field(
                         'title',
                         'string',
+                        requires=IS_NOT_EMPTY(),
+                    ),
+                    Field(
+                        'content',
+                        'string',
+                        requires=IS_NOT_EMPTY(),
                     ),
                     Field(
                         'location',
                         'string',
+                        requires=IS_NOT_EMPTY(),
                     ),
                     Field(
                         'email',
@@ -65,6 +69,11 @@ db.define_table('likes',
                 Field('like_type', 'integer', default=0),
                 Field('likee'),
 )
+
+db.posts.id.readable = db.posts.id.writable = False
+db.posts.email.readable = db.posts.email.writable = False
+db.posts.thumbnail.readable = db.posts.thumbnail.writable = False
+db.posts.name.readable = db.posts.name.writable = False
 
 db.commit()
 

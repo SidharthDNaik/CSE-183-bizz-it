@@ -31,8 +31,11 @@ from .common import db, session, T, cache, auth, logger, authenticated, unauthen
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_name
 import uuid 
+from py4web.utils.form import Form, FormStyleBulma
+from .common import Field
 import random 
 import time
+from pydal.validators import *
 
 url_signer = URLSigner(session)
 
@@ -45,6 +48,7 @@ def index():
         # This is the signed URL for the callback.
         email=get_user_email(),
         name=get_name(),
+        url_signer=url_signer,
         show_delete = show_delete,
         set_likes_url = URL('set_likes', signer=url_signer),
         get_likes_url = URL('get_likes', signer=url_signer),
@@ -67,7 +71,7 @@ def load_posts():
         rows= rows,
         )
 
-@action('add_post', method='POST')
+@action('add_post', method=["GET", "POST"])
 @action.uses(auth, url_signer.verify(), db)
 def add_post():
     name = get_name()
@@ -91,6 +95,18 @@ def add_post():
         assert id is not None
         db(db.posts.id == id).delete()
         return "failed to post"
+
+@action('add_post_new', method=["GET", "POST"])
+@action.uses(db, session, auth.user, 'add_post.html')
+def add_post_new():
+    #Insert form: no records in it
+    form = Form(db.posts, csrf_session=session, formstyle=FormStyleBulma)
+    if form.accepted:
+        #redirect, the insertion already happened
+        redirect(URL('index')) #go back to index after insertion
+
+    #Either this is a GET request, or this is a POST but not accepted = with errors
+    return dict(form=form)
 
 @action('delete_post')
 @action.uses(auth, url_signer.verify(), db)
