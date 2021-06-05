@@ -55,6 +55,9 @@ db.define_table('posts',
                         default = get_user_email,
                     ),
                     Field(
+                        'category','string'
+                    ),
+                    Field(
                         'thumbnail','text'
                     ),
                     
