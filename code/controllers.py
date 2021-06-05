@@ -30,6 +30,9 @@ from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_name
+import uuid 
+import random 
+import time
 
 url_signer = URLSigner(session)
 
@@ -37,6 +40,7 @@ url_signer = URLSigner(session)
 @action.uses(auth, url_signer, 'index.html')
 def index():
     show_delete = db.auth_user.email == get_user_email()
+    
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
@@ -48,9 +52,13 @@ def index():
         load_posts_url = URL('load_posts', signer=url_signer),
         add_post_url = URL('add_post', signer=url_signer),
         delete_post_url = URL('delete_post', signer=url_signer),
+        search_url = URL('search', signer=url_signer),
+        upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
+        edit_post_url = URL('edit_post', signer=url_signer),
         add_comment_url = URL('add_comment', signer=url_signer),
         get_comments_stream_url = URL('get_comments_stream', signer=url_signer),
         delete_comment_url = URL('delete_comment', signer=url_signer),
+       
     )
 
 # This is our very first API function.
@@ -67,39 +75,34 @@ def load_posts():
 def add_post():
     name = get_name()
     email = get_user_email()
-    id = db.posts.insert(
-        content=request.json.get('content'),
-        name=name,
-        email = email,
-    )
-    return dict(
-        id=id,
-        name=name,
-        email=email,
-    )
+    # p = db.posts[post_id]
+    if(request.json.get('title') != "" and request.json.get('content') != "" and request.json.get('location') != ""):
+        id = db.posts.insert(
+            title=request.json.get('title'),
+            content=request.json.get('content'),
+            location=request.json.get('location'),
+            name=name,
+            email = email,
+        )
+        return dict(
+            id=id,
+            name=name,
+            email=email,
+        )
+    else:
+        print("You must fill all the fields to post!")
+        id = request.params.get('id')
+        assert id is not None
+        db(db.posts.id == id).delete()
+        return "failed to post"
 
 @action('delete_post')
 @action.uses(auth, url_signer.verify(), db)
 def delete_post():
     id = request.params.get('id')
     assert id is not None
-    db(db.comments.post_id == id).delete()
     db(db.posts.id == id).delete()
     return "ok"
-
-@action('get_likes')
-@action.uses(url_signer.verify(), db)
-def get_likes():
-    post_id = request.params.get('post_id')
-    likee = request.params.get('likee')
-    row = db(
-                (db.likes.post_id == post_id) &
-                (db.likes.likee == likee)
-            ).select().first()
-    like_type = row.like_type if row is not None else 0
-    return dict(
-        like_type=like_type
-    )
 
 @action('delete_comment')
 @action.uses(auth, url_signer.verify(), db)
@@ -137,6 +140,19 @@ def add_comment():
         email = email,
     )
 
+@action('get_likes')
+@action.uses(url_signer.verify(), db)
+def get_likes():
+    post_id = request.params.get('post_id')
+    likee = request.params.get('likee')
+    row = db(
+                (db.likes.post_id == post_id) &
+                (db.likes.likee == likee)
+            ).select().first()
+    like_type = row.like_type if row is not None else 0
+    return dict(
+        like_type=like_type
+    )
 
 @action('set_likes', method='POST')
 @action.uses(url_signer.verify(), db)
@@ -155,25 +171,6 @@ def set_likes():
         post_id=post_id,
     )
     return "yeet"
-
-@action('get_comments_stream')
-@action.uses(url_signer.verify(), db)
-def get_comments_stream():
-    post_id = request.params.get('post_id')
-    commenter = request.params.get('commenter')
-    rows = db(
-                (db.comments.post_id == post_id) &
-                (db.comments.commenter != commenter)
-            ).select().as_list()
-    number_of_comments = 0
-    comments = []
-    i = 0
-    for r in rows:
-        comments.append(r)
-    return dict(
-        number_of_comments = number_of_comments,
-        comments = [ele for ele in reversed(comments)],
-    )
 
 @action('get_likes_stream')
 @action.uses(url_signer.verify(), db)
@@ -202,3 +199,80 @@ def get_likes_stream():
         likes=likes,
         string_of_dislikes=string_of_dislikes,
     )
+
+@action('get_comments_stream')
+@action.uses(url_signer.verify(), db)
+def get_comments_stream():
+    post_id = request.params.get('post_id')
+    commenter = request.params.get('commenter')
+    rows = db(
+                (db.comments.post_id == post_id) &
+                (db.comments.commenter != commenter)
+            ).select().as_list()
+    number_of_comments = 0
+    comments = []
+    i = 0
+    for r in rows:
+        comments.append(r)
+    return dict(
+        number_of_comments = number_of_comments,
+        comments = [ele for ele in reversed(comments)],
+    )
+
+# This controller is used to go to the explore map page
+@action('explore')
+@action.uses(auth, url_signer, 'explore.html')
+def explore():
+  
+    return dict(
+        # This is the signed URL for the callback.
+        email=get_user_email(),
+        name=get_name(),
+    )
+
+# This controller is used to initialize the database.
+@action('profile')
+@action.uses(auth, url_signer, 'profile.html')
+def profile():
+    return dict(
+        # This is the signed URL for the callback.
+        email=get_user_email(),
+        name=get_name(),
+    )   
+
+@action('search')
+@action.uses(db, url_signer.verify())
+def search():
+    t = request.params.get('q')
+    if t:
+        tt = t.strip()
+        
+        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)))
+        
+    else: 
+        q = db.posts.id > 0
+
+    rows = db(q).select().as_list()
+    return dict(rows=rows)
+    
+
+
+@action('upload_thumbnail', method="POST")
+@action.uses(auth, url_signer.verify(), db)
+def upload_thumbnail():
+    post_id = request.json.get("post_id")
+    thumbnail = request.json.get("thumbnail")
+    db(db.posts.id == post_id).update(thumbnail=thumbnail)
+    redirect(URL('index'))
+    return "ok"
+
+@action('edit_post', method="POST")
+@action.uses(url_signer.verify(), db)
+def edit_post():
+    # Updates the db record.
+    id = request.json.get("id")
+    field = request.json.get("field")
+    value = request.json.get("value")
+    db(db.posts.id == id).update(**{field: value})
+    time.sleep(0.2) # debugging
+    return "ok"

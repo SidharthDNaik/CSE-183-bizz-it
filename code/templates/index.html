@@ -6,23 +6,82 @@
 }
 </style>
 
-<div class="section" id="vue-target" v-cloak>
+<div class="section"style=background-color:rgb(164,215,236); id="vue-target" v-cloak>
+
+  <div class="container">
+    <div class="box" style=background-color:rgb(255,254,211);>
+       <!-- Main container -->
+       <nav class="level">
+          <!-- Left side -->
+          <div class="level-left">
+            <figure class="image is-128x128 ">
+              <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
+           </figure>
+           <div class="section">
+            <h1 class="title is-size-1 " style=color:rgb(85,83,83);>Bizzit</h1>
+          </div>
+          </div>
+
+          <div class="level-middle">
+            <div class="columns block">
+              <div class="column">
+                <p class="control has-icons-right">
+                  <input class="input" type="text" v-model="post_search" @keyup="search"/>
+                  <span class="icon is-small is-right">
+                    <i class="fa fa-search"></i>
+                  </span>
+                </p>
+              </div>
+              <div class="column is-narrow">
+                <button class="button" @click="clear_search">
+                  <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+          
+          
+          <!-- Right side -->
+          <div class="level-right">
+            <p class="subtitle is-size-5">
+              A place for small businesses to grow.
+           </p>
+          </div>
+
+          
+       </nav>
+    </div>
+ </div>
 
   <div class="container block">
-    <h1 class="title">Bizzit</h1>
+
     <div class="container block">
         <!-- Return user name -->
       [[if email:]]
       <!-- the user is logged in -->
-        Welcome, [[=name]].
+      <div class="container block">
+        <div class="box is-narrow" style=background-color:rgb(252,180,174);> 
+
+        Welcome, [[=name]]!
+        
+        </div>
+        
+
+      </div>
+        
       [[else:]]
       <!-- the user is not logged in -->
-        Log in to post, comment, and like.
+      <div class="container block">
+        <div class="box is-narrow" style=background-color:rgb(252,180,174);> 
+        Log in to post and like.
+      </div>
+    </div>
       [[pass]]
     </div>
     [[if email:]]
     <div v-if="!post_mode">
-      <button @click="set_post_status(true)" class="button is-primary">
+      <button @click="set_post_status(true)" class="button is-primary is-light" >
         <i class="fa fa-plus fa-fw"></i> 
       </button>
     </div>
@@ -30,53 +89,173 @@
   </div>
 
   <div v-if="post_mode" class="container block">
-    <div class="form">
 
-      <!-- This looks like a form, but is not.  We just need the inputs. -->
-      <div class="field">
-        <div class="control">
-          <textarea v-model="add_content" class="textarea" placeholder="Enter new post here"></textarea>
+    <div class="box" style=background-color:rgb(255,254,211);>
+      <div class="form">
+        <!-- This looks like a form, but is not.  We just need the inputs. -->
+        <div class="field">
+  
+          <p class="subtitle is-size-4 has-text-black">
+            New Post
+         </p>
+  
+          <div class="container block">
+            <div class="control">
+              <p class="subtitle is-size-5">
+                Title:
+             </p>
+              <input class="input is-info" type="text" v-model="add_title" placeholder="Enter a title for your post here">
+            </div>
+          </div>
+          
+          <div class="container block">
+            <div class="control">
+              <p class="subtitle is-size-5">
+                Caption:
+             </p>
+              <textarea class="textarea is-info" v-model="add_content" class="textarea" placeholder="Enter post caption here"></textarea>
+            </div>
+          </div>
+  
+          <div class="container block">
+            <div class="control">
+              <p class="subtitle is-size-5">
+                Location:
+             </p>
+              <input class="input is-primary" type="text" v-model="add_location" placeholder="Enter your small business' address here">
+            </div>
+          </div>
+          
         </div>
-      </div>
-      <div class="field">
-        <div class="control">
-          <input type="submit" @click="add_post" value="Post" class="button is-primary">
-          <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning">
+  
+        <p class="subtitle is-size-7" style=color:rgb(199,91,81);>
+          *Note: You must fill all fields in order to post.
+       </p>
+        <div class="field">
+          <div class="control">
+            <input type="submit" @click="add_post" value="Post" class="button is-primary is-light">
+            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-danger is-light">
+          </div>
         </div>
+  
       </div>
     </div>
+    
   </div>
 
 
   <div class="container block">
-    <table class="table is-striped is-fullwidth">
-      <div v-for="r in rows.slice().reverse()" class="box">
-        <div class="content is-medium">
-            <p>
-              {{r.content}}
-            </p>
+    <table class="table is-fullwidth">
+      <div v-for="r in rows.slice().reverse()" class="box" >
+
+        <div v-for="fn in ['title']" v-if="r.email === '[[=email]]'" >
+          <div class="control" :class="{'is-loading': r._state[fn] === 'pending'}" >
+              <input type="text" class="input title" v-model="r[fn]" 
+              :class="{
+                'is-focused': r._state[fn] === 'edit',
+                'is-static': r._state[fn] === 'clean',
+              }"
+              :readonly="r._state[fn] === 'clean'"
+              @click= "start_edit(r._idx, fn)"
+              @blur="stop_edit(r._idx, fn)"
+            /> 
           </div>
+        </div>
+        <div v-if="r.email != '[[=email]]'">
+          <div class="title section">
+              {{r.title}}
+          </div>
+        </div>
+        
+        
+        <div style="float:right;">
+          <div v-if="r.email === '[[=email]]'">
+            <div v-if="!r.thumbnail">
+              <p class="control section">
+                <div class="file is-info">
+                  <label class="file-label">
+                    <input class="file-input" type="file"
+                           accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                           @change="upload_file($event, r._idx)">
+                    <span class="file-cta">
+                      <span class="file-label">
+                        <span><i class="fa fa-upload"></i></span>
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              </p>
+            </div>
+  
+          </div>
+        
+        </div>
+
+        <div class="content">
+          <img v-if="r.thumbnail"  width="450" :src="r.thumbnail" />
+        </div>
+   
+        <div v-for="fn in ['content']" v-if="r.email === '[[=email]]'" >
+          <div class="control" :class="{'is-loading': r._state[fn] === 'pending'}" >
+            <!-- <textarea class="textarea is-medium" v-model="r[fn]"> -->
+            <input type="text" class="input is-medium" v-model="r[fn]" 
+              :class="{
+                'is-focused': r._state[fn] === 'edit',
+                'is-static': r._state[fn] === 'clean',
+              }"
+              :readonly="r._state[fn] === 'clean'"
+              @click= "start_edit(r._idx, fn)"
+              @blur="stop_edit(r._idx, fn)"
+            /> 
+          <!-- </textarea>  -->
+          </div>
+        </div>
+        <div v-if="r.email != '[[=email]]'">
+          <div class="content is-medium">
+              {{r.content}}
+          </div>
+        </div>
+
+        <div v-for="fn in ['location']" v-if="r.email === '[[=email]]'" >
+          <div class="control" :class="{'is-loading': r._state[fn] === 'pending'}" >
+              <input type="text" class="input is-medium" v-model="r[fn]" 
+              :class="{
+                'is-focused': r._state[fn] === 'edit',
+                'is-static': r._state[fn] === 'clean',
+              }"
+              :readonly="r._state[fn] === 'clean'"
+              @click= "start_edit(r._idx, fn)"
+              @blur="stop_edit(r._idx, fn)"
+            /> 
+          </div>
+        </div>
+        <div v-if="r.email != '[[=email]]'">
+          <div class="content is-medium">
+              {{r.location}}
+          </div>
+        </div>
           <div class="content is-small">
             <p>
               {{r.name}}
             </p>
           </div>
+          
 
           <div style="float:right;">
             <div v-if="r.email === '[[=email]]'">
-              <button @click="delete_post(r._idx)" class="button is-danger">
+              <button @click="delete_post(r._idx)" class="button is-danger is-light">
                 <i class="fa fa-trash"></i>
               </button>
             </div>
           </div>
-
+        </span>
           <div stlye="padding-bottom: 5px">
             <!-- if email you can like -->
             [[if email:]]
 
               <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
 
-                  <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 1)">
+                  <span class="icon is-large has-text-danger " @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 1)">
                       <i class="fa fa-flip-horizontal" :class="{
                           'fa-heart-o': !(r.like_type === 1),
                           'fa-heart': (r.like_type === 1),
@@ -90,7 +269,7 @@
 
               <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
   
-                    <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)">
+                    <span class="icon is-large has-text-danger" @mouseover="set_hover(r._idx, true)">
                       <i class="fa fa-heart-o"></i>
                     </span>
   
@@ -124,68 +303,91 @@
               <br>
           </span>
           
-          <span v-if="r.comments_a_viewable">
+        <span v-if="r.comments_a_viewable">
 
-              <br>
+            <br>
 
-              <div style="overflow-y: scroll; padding-top: 10px; padding-bottom: 10px; max-height: 400px; display: flex; flex-direction: column-reverse;">
+            <div style="overflow-y: scroll; padding-top: 10px; padding-bottom: 10px; max-height: 400px; display: flex; flex-direction: column-reverse;">
 
-                <span v-for="(c, index) in r.comments">
+              <span v-for="(c, index) in r.comments">
 
-                    <span v-if="index == r.comments.length - 1">
-                      <div style="padding-bottom: 20px;">
-                        <div style="padding-top: 15px;">
-                          {{c['comment_content']}}
-                        </div>
-                      </div> 
-                    </span>
-
-                    <span v-else>
-                      <div style="padding-bottom: 20px; border-top-style: solid; border-width: .5px; border-color: lightgray;">
-                        <div style="padding-top: 15px;">
-                          {{c['comment_content']}}
-                        </div>
-                      </div> 
-                    </span>
-
-                    [[if email:]]
-
-                    <div style="float:right;">
-                      <div v-if="c['email'] === '[[=email]]'">
-                        <button @click="delete_comment(r._idx, c['id'], index)" class="button is-danger">
-                          <i class="fa fa-trash"></i>
-                        </button>
+                  <span v-if="index == r.comments.length - 1">
+                    <div style="padding-bottom: 20px;">
+                      <div style="padding-top: 15px;">
+                        {{c['comment_content']}}
                       </div>
+                    </div> 
+                  </span>
+
+                  <span v-else>
+                    <div style="padding-bottom: 20px; border-top-style: solid; border-width: .5px; border-color: lightgray;">
+                      <div style="padding-top: 15px;">
+                        {{c['comment_content']}}
+                      </div>
+                    </div> 
+                  </span>
+
+                  [[if email:]]
+
+                  <div style="float:right;">
+                    <div v-if="c['email'] === '[[=email]]'">
+                      <button @click="delete_comment(r._idx, c['id'], index)" class="button is-danger">
+                        <i class="fa fa-trash"></i>
+                      </button>
                     </div>
-
-                    [[pass]]
-
-                </span>
-
-              </div>  
-
-              [[if email:]]
-                <div style="padding-top: 20px; display: flex;">
-                  <div style="flex: 20; padding-right: 10px">
-                  <input v-model="r.comment" class="input" type="text" placeholder="Type here to enter comment">
                   </div>
-                  <div style="flex: 1;">
-                    <input type="submit" @click="add_comment(r._idx)" value="Post" class="button is-primary">
-                  </div>
+
+                  [[pass]]
+
+              </span>
+
+            </div>  
+
+            [[if email:]]
+              <div style="padding-top: 20px; display: flex;">
+                <div style="flex: 20; padding-right: 10px">
+                <input v-model="r.comment" class="input" type="text" placeholder="Type here to enter comment">
                 </div>
-              [[pass]]
+                <div style="flex: 1;">
+                  <input type="submit" @click="add_comment(r._idx)" value="Post" class="button is-primary">
+                </div>
+              </div>
+            [[pass]]
 
-              <br>
+            <br>
 
-          </span>
+        </span>
 
         <div style="height: 15px"></div>
 
       </div>
     </table>
   </div>
+</div>
+  
 
 </div>
+  <div class="box" style=background-color:rgb(164,215,236);> 
+
+    <div class="container block" style=background-color:rgb(164,215,236);>
+      <nav class="level">
+        <div class="level-left">
+          <figure class="image is-96x96 ">
+            <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
+         </figure>
+        <div class="section">
+          <h1 class="title is-size-3" style=color:white;>Bizzit</h1>
+        </div>
+       </div>
+       <div class="level-right ">
+        <p class="text is-size-6" style=color:white;>
+          A place for small businesses to grow.
+       </p>
+       </div>
+      </nav>
+    </div>
+  
+  </div>
 
 
 [[block page_scripts]]
@@ -197,10 +399,13 @@
   let user_name = "[[=name]]";
   let set_likes_url = "[[=XML(set_likes_url)]]";
   let get_likes_url = "[[=XML(get_likes_url)]]";
-  let add_comment_url = "[[=XML(add_comment_url)]]";
   let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
+  let search_url = "[[=XML(search_url)]]";
+  let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
+  let edit_post_url = "[[=XML(edit_post_url)]]";
   let get_comments_stream_url = "[[=XML(get_comments_stream_url)]]";
   let delete_comment_url = "[[=XML(delete_comment_url)]]";
+  let add_comment_url = "[[=XML(add_comment_url)]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]
