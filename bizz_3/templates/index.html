@@ -4,11 +4,14 @@
 [v-cloak] {
      display: none;
 }
+div.pac-container {
+    z-index: 99999999999 !important;
+}
 </style>
 
 <div class="section" id="vue-target" v-cloak>
-
   <div class="container block">
+    <input id="autocomplete" placeholder="Enter a place" type="text" />
     <nav class="level">
       <div class="level-left">
         <figure class="image is-128x128 ">
@@ -19,7 +22,7 @@
       </div>
      </div>
      <div class="level-right ">
-      <!-- <p class="subtitle is-size-6 is-italic"> -->
+      <!-- <p class="subtitle is-size-6 is-italic"> --> 
       <p class="subtitle is-size-6">
         A place for small businesses to grow.
      </p>
@@ -88,12 +91,22 @@
           </div>
         </div>
 
-        <div class="container block">
+        <div class="box">
           <div class="control">
-            <p class="subtitle is-size-5">
+            <div class="subtitle is-size-5">
               Location:
-           </p>
+            </div>
+            <!--
+              <input id="autocomplete" type="text" placeholder="Enter a place"/>
+           
             <input class="input is-primary" type="text" v-model="add_location" placeholder="Enter your small business' address here">
+           -->
+          
+          <!--
+          <input class="input is-primary" input id="auto" type="text" v-model="add_location" placeholder="Enter your small business' address here">
+          -->
+
+          
           </div>
         </div>
         
@@ -113,7 +126,6 @@
           </div>
         </div>
       </div>
-
       
       <div class="field">
         <div class="control">
@@ -125,9 +137,9 @@
     </div>
   </div>
 
-
   <div class="container block">
     <table class="table is-striped is-fullwidth">
+      
       <!--
       <span v-if="search_mode===true">
         
@@ -135,7 +147,7 @@
       <div v-for="r in rows.slice().reverse()" class="box">
       -->
       <div v-for="r in rows.slice().reverse()" class="box">
-
+        
         <div class="title">
           <p>
             {{r.title}}
@@ -191,6 +203,7 @@
               {{r.category}}
             </p>
           </div>
+
 
           <div style="float:right;">
             <div v-if="r.email === '[[=email]]'">
@@ -333,5 +346,40 @@
   let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
 </script>
 <script src="js/index.js"></script>
+
+
+
+<script>
+  function initAutocomplete(){
+    var input = document.getElementById('autocomplete');
+    var autocomplete = new google.maps.places.Autocomplete(input);
+ 
+  }
+  
+  /*function activatePlacesSearch(){
+    var input = document.getElementById('auto');
+    var autocomplete = new google.maps.places.Autocomplete(input);
+
+  }*/
+
+  /*let autocomplete;
+  function initAutocomplete() {
+    autocomplete = new google.maps.places.Autocomplete(
+      document.getElementById('autocomplete'),
+      {
+        types: ['establishment'],
+        componentRestrictions: {'country': ['us']},
+        fields: ['place_id', 'geometry', 'name']
+      });
+      
+  }*/
+</script>
+<!---
+<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfaQVuR2MyDiXTVRObaMRNkpi4gVLRR68&libraries=places&callback=activatePlacesSearch">
+-->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfaQVuR2MyDiXTVRObaMRNkpi4gVLRR68&libraries=places&callback=initAutocomplete" async defer>
+</script>
+
 [[end]]
+
 
