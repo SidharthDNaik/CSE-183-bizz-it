@@ -38,16 +38,6 @@ let init = (app) => {
         return a;
     };
 
-     // This decorates the rows (e.g. that come from the server)
-    // adding information on their state:
-    // - clean: read-only, the value is saved on the server
-    // - edit : the value is being edited
-    // - pending : a save is pending.
-    app.decorate = (a) => {
-        a.map((e) => {e._state = {title: "clean", content: "clean", location: "clean"} ;});
-        return a;
-    }
-
     app.select_file = function (event) {
         // Reads the file.
         let input = event.target;
@@ -164,7 +154,6 @@ let init = (app) => {
                         number_of_dislikes: 0,
                         likes: [],
                         string_of_dislikes: "",
-                        _state: {title: "clean", content: "clean", location: "clean"},
                     });
                     app.enumerate(app.vue.rows);
                     app.reset_form();
@@ -264,7 +253,6 @@ let init = (app) => {
         Vue.set(row, 'comments_a_viewable', !row.comments_a_viewable);
     };
 
-
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -280,8 +268,6 @@ let init = (app) => {
         clear_search: app.clear_search,
         select_file: app.select_file,
         upload_file: app.upload_file,
-        start_edit: app.start_edit,
-        stop_edit: app.stop_edit,
     };
 
     // This creates the Vue instance.
@@ -298,7 +284,7 @@ let init = (app) => {
     app.init = () => {
         axios.get(search_url).then(
         function (response) {
-            app.vue.rows = app.decorate(app.commentable(app.likes_stream(app.likeable(app.enumerate(response.data.rows)))));
+            app.vue.rows = app.commentable(app.likes_stream(app.likeable(app.enumerate(response.data.rows))));
         }).then(
             () => {
                 for(let row of app.vue.rows){

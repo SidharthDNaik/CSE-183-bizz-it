@@ -10,49 +10,39 @@
 
   <div class="container">
     <div class="box" style=background-color:rgb(255,254,211);>
-       <!-- Main container -->
-       <nav class="level">
-          <!-- Left side -->
-          <div class="level-left">
-            <figure class="image is-128x128 ">
-              <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
-           </figure>
-           <div class="section">
-            <h1 class="title is-size-1 " style=color:rgb(85,83,83);>Bizzit</h1>
-          </div>
-          </div>
-
-          <div class="level-middle">
-            <div class="columns block">
-              <div class="column">
-                <p class="control has-icons-right">
-                  <input class="input" type="text" v-model="post_search" @keyup="search"/>
-                  <span class="icon is-small is-right">
-                    <i class="fa fa-search"></i>
-                  </span>
-                </p>
-              </div>
-              <div class="column is-narrow">
-                <button class="button" @click="clear_search">
-                  <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
-                </button>
-              </div>
-            </div>
-
-          </div>
-          
-          
-          <!-- Right side -->
-          <div class="level-right">
+      <nav class="level">
+        <!-- Left side -->
+        <div class="level-left">
+          <figure class="image is-128x128 ">
+            <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
+          </figure>
+          <div class="section">
+            <h1 class="title is-size-1">Bizzit</h1>
             <p class="subtitle is-size-5">
               A place for small businesses to grow.
-           </p>
+            </p>        
           </div>
+        </div>
 
-          
-       </nav>
+          <div class="columns block">
+            <div class="column">
+              <p class="control has-icons-right">
+                <input class="input" type="text" v-model="post_search" placeholder="Search posts" @keyup="search"/>
+                <span class="icon is-small is-right">
+                  <i class="fa fa-search"></i>
+                </span>
+              </p>
+            </div>
+            <div class="column is-narrow">
+              <button class="button" @click="clear_search">
+                <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
+              </button>
+            </div>
+          </div>
+     </nav>
     </div>
- </div>
+  </div>
+
 
   <div class="container block">
 
@@ -80,23 +70,23 @@
       [[pass]]
     </div>
     [[if email:]]
-    <!-- <div v-if="!post_mode">
+    <div v-if="!post_mode">
       <button @click="set_post_status(true)" class="button is-primary is-light" >
         <i class="fa fa-plus fa-fw"></i> 
       </button>
-    </div> -->
+    </div>
     [[pass]]
   </div>
 
-  <!-- <div v-if="post_mode" class="container block">
+  <div v-if="post_mode" class="container block">
 
     <div class="box" style=background-color:rgb(255,254,211);>
       <div class="form">
-        
+        <!-- This looks like a form, but is not.  We just need the inputs. -->
         <div class="field">
   
           <p class="subtitle is-size-4 has-text-black">
-            New Post
+            New Post:
          </p>
   
           <div class="container block">
@@ -127,64 +117,41 @@
           </div>
           
         </div>
-
-        <div class="notification is-danger is-light">
-          <span class="icon is-light">
-            <i class="fa fa-flag-o"></i>
-          </span>
-          <strong>*Note:</strong> You must fill all fields in order to post.
-        </div>
-
+  
+        
         <div class="field">
           <div class="control">
-            <input type="submit" @click="add_post" value="Post" class="button is-primary is-light">
-            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-danger is-light">
+            <input type="submit" @click="add_post" value="Post" class="button is-primary">
+            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning">
           </div>
         </div>
   
       </div>
     </div>
     
-  </div> -->
-
-  <div class="container block">
-
-    <a class="button is-primary is-light" href="[[=URL('add_post_new', signer=url_signer)]]">
-      <i class="fa fa-plus fa-fw"></i> 
-   </a>
-
   </div>
-  
 
 
   <div class="container block">
-    <table class="table is-fullwidth">
-      <div v-for="r in rows.slice().reverse()" class="box" >
-
-        <div v-for="fn in ['title']" v-if="r.email === '[[=email]]'" >
-          <div class="control" :class="{'is-loading': r._state[fn] === 'pending'}" >
-              <input type="text" class="input title" v-model="r[fn]" 
-              :class="{
-                'is-focused': r._state[fn] === 'edit',
-                'is-static': r._state[fn] === 'clean',
-              }"
-              :readonly="r._state[fn] === 'clean'"
-              @click= "start_edit(r._idx, fn)"
-              @blur="stop_edit(r._idx, fn)"
-            /> 
-          </div>
-        </div>
-        <div v-if="r.email != '[[=email]]'">
-          <div class="title section">
-              {{r.title}}
-          </div>
-        </div>
+    <table class="table is-striped is-fullwidth">
+      <!--
+      <span v-if="search_mode===true">
         
+      <div v-for="p in posts_list" class="box">{{p}}
+      <div v-for="r in rows.slice().reverse()" class="box">
+      -->
+      <div v-for="r in rows.slice().reverse()" class="box">
+
+        <div class="title">
+          <p>
+            {{r.title}}
+          </p>
+        </div>
         
         <div style="float:right;">
           <div v-if="r.email === '[[=email]]'">
             <div v-if="!r.thumbnail">
-              <p class="control section">
+              <p class="control">
                 <div class="file is-info">
                   <label class="file-label">
                     <input class="file-input" type="file"
@@ -205,60 +172,38 @@
         </div>
 
         <div class="content">
-          <img v-if="r.thumbnail"  width="450" :src="r.thumbnail" />
-        </div>
-   
-        <div v-for="fn in ['content']" v-if="r.email === '[[=email]]'" >
-          <div class="control" :class="{'is-loading': r._state[fn] === 'pending'}" >
-            <!-- <textarea class="textarea is-medium" v-model="r[fn]"> -->
-            <input type="text" class="input is-medium" v-model="r[fn]" 
-              :class="{
-                'is-focused': r._state[fn] === 'edit',
-                'is-static': r._state[fn] === 'clean',
-              }"
-              :readonly="r._state[fn] === 'clean'"
-              @click= "start_edit(r._idx, fn)"
-              @blur="stop_edit(r._idx, fn)"
-            /> 
-          <!-- </textarea>  -->
-          </div>
-        </div>
-        <div v-if="r.email != '[[=email]]'">
-          <div class="content is-medium">
-              {{r.content}}
-          </div>
-        </div>
 
-        <div v-for="fn in ['location']" v-if="r.email === '[[=email]]'" >
-          <div class="control" :class="{'is-loading': r._state[fn] === 'pending'}" >
-              <input type="text" class="input is-medium" v-model="r[fn]" 
-              :class="{
-                'is-focused': r._state[fn] === 'edit',
-                'is-static': r._state[fn] === 'clean',
-              }"
-              :readonly="r._state[fn] === 'clean'"
-              @click= "start_edit(r._idx, fn)"
-              @blur="stop_edit(r._idx, fn)"
-            /> 
-          </div>
+          <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
         </div>
-        <div v-if="r.email != '[[=email]]'">
-          <div class="content is-medium">
-              {{r.location}}
+        
+        <div class="content is-medium">
+            <p>
+              {{r.content}}
+            </p>
           </div>
-        </div>
           <div class="content is-small">
             <p>
               {{r.name}}
             </p>
           </div>
-          
+          <div class="content is-small">
+            <p>
+              {{r.location}}
+            </p>
+          </div>
 
           <div style="float:right;">
             <div v-if="r.email === '[[=email]]'">
-              <button @click="delete_post(r._idx)" class="button is-danger is-light">
+
+              
+              <button @click="delete_post(r._idx)" class="button is-danger">
                 <i class="fa fa-trash"></i>
               </button>
+
+              <!-- <button @click="edit_post(r._idx)" class="button is-danger">
+                <i class="fa fa-fw fa-pencil"></i>
+              </button> -->
+              
             </div>
           </div>
         </span>
@@ -268,7 +213,7 @@
 
               <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
 
-                  <span class="icon is-large has-text-danger " @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 1)">
+                  <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 1)">
                       <i class="fa fa-flip-horizontal" :class="{
                           'fa-heart-o': !(r.like_type === 1),
                           'fa-heart': (r.like_type === 1),
@@ -282,7 +227,7 @@
 
               <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
   
-                    <span class="icon is-large has-text-danger" @mouseover="set_hover(r._idx, true)">
+                    <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)">
                       <i class="fa fa-heart-o"></i>
                     </span>
   
@@ -347,7 +292,6 @@
     </table>
   </div>
 </div>
-  
 
 </div>
   <div class="box" style=background-color:rgb(164,215,236);> 
@@ -385,9 +329,7 @@
   let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
   let search_url = "[[=XML(search_url)]]";
   let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
-  let edit_post_url = "[[=XML(edit_post_url)]]";
 </script>
 <script src="js/index.js"></script>
-
 [[end]]
 
