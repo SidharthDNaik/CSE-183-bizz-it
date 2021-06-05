@@ -74,6 +74,7 @@ def add_post():
         title=request.json.get('title'),
         content=request.json.get('content'),
         location=request.json.get('location'),
+        category=request.json.get('category'),
         name=name,
         email = email,
     )
@@ -201,7 +202,7 @@ def search():
     if t:
         tt = t.strip()
         
-        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)))
+        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)) | (db.posts.category.contains(tt)))
         
     else: 
         q = db.posts.id > 0
