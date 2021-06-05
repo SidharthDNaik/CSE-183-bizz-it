@@ -72,18 +72,26 @@ def load_posts():
 def add_post():
     name = get_name()
     email = get_user_email()
-    id = db.posts.insert(
-        title=request.json.get('title'),
-        content=request.json.get('content'),
-        location=request.json.get('location'),
-        name=name,
-        email = email,
-    )
-    return dict(
-        id=id,
-        name=name,
-        email=email,
-    )
+    # p = db.posts[post_id]
+    if(request.json.get('title') != "" and request.json.get('content') != "" and request.json.get('location') != ""):
+        id = db.posts.insert(
+            title=request.json.get('title'),
+            content=request.json.get('content'),
+            location=request.json.get('location'),
+            name=name,
+            email = email,
+        )
+        return dict(
+            id=id,
+            name=name,
+            email=email,
+        )
+    else:
+        print("You must fill all the fields to post!")
+        id = request.params.get('id')
+        assert id is not None
+        db(db.posts.id == id).delete()
+        return "failed to post"
 
 @action('delete_post')
 @action.uses(auth, url_signer.verify(), db)

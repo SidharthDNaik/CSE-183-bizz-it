@@ -96,7 +96,7 @@
         <div class="field">
   
           <p class="subtitle is-size-4 has-text-black">
-            New Post:
+            New Post
          </p>
   
           <div class="container block">
@@ -128,11 +128,13 @@
           
         </div>
   
-        
+        <p class="subtitle is-size-7" style=color:rgb(199,91,81);>
+          *Note: You must fill all fields in order to post.
+       </p>
         <div class="field">
           <div class="control">
-            <input type="submit" @click="add_post" value="Post" class="button is-primary">
-            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning">
+            <input type="submit" @click="add_post" value="Post" class="button is-primary is-light">
+            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-danger is-light">
           </div>
         </div>
   
@@ -144,7 +146,7 @@
 
   <div class="container block">
     <table class="table is-fullwidth">
-      <div v-for="r in rows.slice().reverse()" class="box">
+      <div v-for="r in rows.slice().reverse()" class="box" >
 
         <div v-for="fn in ['title']" v-if="r.email === '[[=email]]'" >
           <div class="control" :class="{'is-loading': r._state[fn] === 'pending'}" >
@@ -241,7 +243,7 @@
 
           <div style="float:right;">
             <div v-if="r.email === '[[=email]]'">
-              <button @click="delete_post(r._idx)" class="button is-danger">
+              <button @click="delete_post(r._idx)" class="button is-danger is-light">
                 <i class="fa fa-trash"></i>
               </button>
             </div>
