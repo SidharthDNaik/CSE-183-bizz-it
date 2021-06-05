@@ -101,6 +101,9 @@ let init = (app) => {
                     function (response){
                         let row = app.vue.rows[row_idx];
                         let rows = response.data.rows;
+                        if (typeof row.comments == 'undefined'){
+                            Vue.set(row, 'comments', []);
+                        }
                         row.comments.unshift(rows[rows.length-1]);
                         Vue.set(row, 'email', response.data.email);
                         app.enumerate(app.vue.rows);
@@ -117,9 +120,18 @@ let init = (app) => {
         app.vue.name = "";
     };
 
-    app.delete_comment = function(row_idx){
-        let row = app.vue.rows[row_idx]
-    }
+    app.delete_comment = function(row_idx, c_idx, cs_idx){
+        let post_id = app.vue.rows[row_idx].id;
+        axios.get(delete_comment_url,
+            {params: {
+                post_id: post_id,
+                c_idx: c_idx
+            }}
+        ).then( function (response){
+            app.vue.rows[row_idx].comments.splice(cs_idx,1);
+            app.enumerate(app.vue.rows);
+        }); 
+    };
 
     app.delete_post = function(row_idx) {
         //TODO;
@@ -165,7 +177,6 @@ let init = (app) => {
                 Vue.set(row, 'number_of_dislikes', row.number_of_dislikes + 1)
             }
         }
-        console.log(row.number_of_dislikes);
         axios.post(set_likes_url, {post_id: row.id, 
                                    like_type: row.like_type, 
                                    likee: user_name});
@@ -192,6 +203,7 @@ let init = (app) => {
         set_likes: app.set_likes,
         toggle_comments: app.toggle_comments,
         add_comment: app.add_comment,
+        delete_comment: app.delete_comment,
     };
 
     // This creates the Vue instance.

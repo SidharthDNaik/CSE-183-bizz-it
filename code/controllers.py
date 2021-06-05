@@ -50,6 +50,7 @@ def index():
         delete_post_url = URL('delete_post', signer=url_signer),
         add_comment_url = URL('add_comment', signer=url_signer),
         get_comments_stream_url = URL('get_comments_stream', signer=url_signer),
+        delete_comment_url = URL('delete_comment', signer=url_signer),
     )
 
 # This is our very first API function.
@@ -82,6 +83,7 @@ def add_post():
 def delete_post():
     id = request.params.get('id')
     assert id is not None
+    db(db.comments.post_id == id).delete()
     db(db.posts.id == id).delete()
     return "ok"
 
@@ -102,9 +104,14 @@ def get_likes():
 @action('delete_comment')
 @action.uses(auth, url_signer.verify(), db)
 def delete_comment():
-    id = request.params.get('id')
-    assert id is not None
-    db.(db.comments.id == id).delete()
+    post_id = request.params.get('post_id')
+    c_idx = request.params.get('c_idx')
+    assert post_id is not None
+    assert c_idx is not None
+    db(
+        (db.comments.post_id == post_id) &
+        (db.comments.id == c_idx)
+      ).delete()
     return "ok"
 
 @action('add_comment', method='POST')
@@ -116,9 +123,6 @@ def add_comment():
     assert post_id is not None and t_comment is not None
     comment_content = commenter + ": " + t_comment
     email = get_user_email()
-    print(post_id)
-    print(commenter)
-    print(comment_content)
     db.comments.insert(
         post_id = post_id,
         commenter = commenter,

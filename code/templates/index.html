@@ -17,7 +17,7 @@
         Welcome, [[=name]].
       [[else:]]
       <!-- the user is not logged in -->
-        Log in to post and like.
+        Log in to post, comment, and like.
       [[pass]]
     </div>
     [[if email:]]
@@ -152,7 +152,7 @@
 
                     <div style="float:right;">
                       <div v-if="c['email'] === '[[=email]]'">
-                        <button @click="" class="button is-danger">
+                        <button @click="delete_comment(r._idx, c['id'], index)" class="button is-danger">
                           <i class="fa fa-trash"></i>
                         </button>
                       </div>
@@ -160,8 +160,6 @@
 
                     [[pass]]
 
-
-                    
                 </span>
 
               </div>  
@@ -201,7 +199,8 @@
   let get_likes_url = "[[=XML(get_likes_url)]]";
   let add_comment_url = "[[=XML(add_comment_url)]]";
   let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
-  let get_comments_stream_url = "[[=XML(get_comments_stream_url)]]"
+  let get_comments_stream_url = "[[=XML(get_comments_stream_url)]]";
+  let delete_comment_url = "[[=XML(delete_comment_url)]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]
