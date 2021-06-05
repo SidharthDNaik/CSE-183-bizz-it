@@ -105,3 +105,265 @@ success!
 success!
 success!
 success!
+success!
+timestamp: 2021-05-27T13:52:35.111642
+CREATE TABLE "posts"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "name" CHAR(512),
+    "content" CHAR(512),
+    "email" CHAR(512)
+);
+success!
+timestamp: 2021-05-27T13:52:35.116905
+ALTER TABLE "likes" ADD "post_id" INTEGER REFERENCES "posts" ("id") ON DELETE CASCADE  ;
+timestamp: 2021-05-27T13:52:35.118870
+ALTER TABLE "likes" ADD "like_type" INTEGER;
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+timestamp: 2021-05-27T14:38:55.660733
+ALTER TABLE "likes" ADD "likee" CHAR(512);
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+<<<<<<< HEAD:bizz_3/databases/sql.log
+=======
+<<<<<<< HEAD
+=======
+timestamp: 2021-06-02T23:29:59.486191
+ALTER TABLE "posts" ADD "thumbnail" CHAR(512);
+>>>>>>> origin/Neelam
+>>>>>>> Neha:code/databases/sql.log
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+<<<<<<< HEAD:bizz_3/databases/sql.log
+=======
+timestamp: 2021-06-03T01:23:54.480239
+ALTER TABLE "posts" ADD "image" TEXT;
+>>>>>>> Neha:code/databases/sql.log
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+<<<<<<< HEAD:bizz_3/databases/sql.log
+=======
+timestamp: 2021-06-03T18:19:15.637262
+ALTER TABLE "posts" ADD "title" CHAR(512);
+>>>>>>> Neha:code/databases/sql.log
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+<<<<<<< HEAD:bizz_3/databases/sql.log
+=======
+timestamp: 2021-06-03T18:57:55.110227
+ALTER TABLE "posts" ADD "location" CHAR(512);
+success!
+success!
+success!
+success!
+success!
+success!
+timestamp: 2021-06-03T21:32:36.827880
+ALTER TABLE "posts" ADD "title" CHAR(512);
+timestamp: 2021-06-03T21:32:36.833166
+ALTER TABLE "posts" ADD "location" CHAR(512);
+timestamp: 2021-06-03T21:32:36.836430
+ALTER TABLE "posts" ADD "thumbnail" TEXT;
+success!
+>>>>>>> Neha:code/databases/sql.log
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
