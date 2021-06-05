@@ -166,11 +166,33 @@ def explore():
 @action('profile')
 @action.uses(auth.user, url_signer, 'profile.html')
 def profile():
+    show_delete = db.auth_user.email == get_user_email()
+    
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
         name=get_name(),
-    )   
+        show_delete = show_delete,
+        set_likes_url = URL('set_likes', signer=url_signer),
+        get_likes_url = URL('get_likes', signer=url_signer),
+        get_likes_stream_url = URL('get_likes_stream', signer=url_signer),
+        load_posts_url = URL('load_posts', signer=url_signer),
+        add_post_url = URL('add_post', signer=url_signer),
+        delete_post_url = URL('delete_post', signer=url_signer),
+        search_url = URL('search', signer=url_signer),
+        upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
+       
+    ) 
+
+# About Bizzit page
+@action('about')
+@action.uses(auth, url_signer, 'about.html')
+def about():
+    return dict(
+        # This is the signed URL for the callback.
+        email=get_user_email(),
+        name=get_name(),
+    ) 
 
 @action('search')
 @action.uses(db, url_signer.verify())
