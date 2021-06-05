@@ -81,7 +81,7 @@ elif settings.SESSION_TYPE == "database":
 # Instantiate the object and actions that handle auth
 # #######################################################
 
-auth = Auth(session, db, define_tables=False)
+auth = Auth(session, db, define_tables=False, extra_fields=[Field('small_business', 'boolean')])
 
 # Fixes the messages.
 auth_messages = copy.deepcopy(auth.MESSAGES)
