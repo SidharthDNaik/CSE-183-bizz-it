@@ -32,6 +32,7 @@ from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_name
 import uuid 
 import random 
+import time
 
 url_signer = URLSigner(session)
 
@@ -53,6 +54,7 @@ def index():
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
         upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
+        edit_post_url = URL('edit_post', signer=url_signer),
        
     )
 
@@ -70,18 +72,26 @@ def load_posts():
 def add_post():
     name = get_name()
     email = get_user_email()
-    id = db.posts.insert(
-        title=request.json.get('title'),
-        content=request.json.get('content'),
-        location=request.json.get('location'),
-        name=name,
-        email = email,
-    )
-    return dict(
-        id=id,
-        name=name,
-        email=email,
-    )
+    # p = db.posts[post_id]
+    if(request.json.get('title') != "" and request.json.get('content') != "" and request.json.get('location') != ""):
+        id = db.posts.insert(
+            title=request.json.get('title'),
+            content=request.json.get('content'),
+            location=request.json.get('location'),
+            name=name,
+            email = email,
+        )
+        return dict(
+            id=id,
+            name=name,
+            email=email,
+        )
+    else:
+        print("You must fill all the fields to post!")
+        id = request.params.get('id')
+        assert id is not None
+        db(db.posts.id == id).delete()
+        return "failed to post"
 
 @action('delete_post')
 @action.uses(auth, url_signer.verify(), db)
@@ -196,4 +206,15 @@ def upload_thumbnail():
     thumbnail = request.json.get("thumbnail")
     db(db.posts.id == post_id).update(thumbnail=thumbnail)
     redirect(URL('index'))
+    return "ok"
+
+@action('edit_post', method="POST")
+@action.uses(url_signer.verify(), db)
+def edit_post():
+    # Updates the db record.
+    id = request.json.get("id")
+    field = request.json.get("field")
+    value = request.json.get("value")
+    db(db.posts.id == id).update(**{field: value})
+    time.sleep(0.2) # debugging
     return "ok"
