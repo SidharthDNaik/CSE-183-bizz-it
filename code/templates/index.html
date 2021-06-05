@@ -127,10 +127,17 @@
           </div>
           
         </div>
+
+        <div class="notification is-danger is-light">
+          <span class="icon is-light">
+            <i class="fa fa-flag-o"></i>
+          </span>
+          <strong>*Note:</strong> You must fill all fields in order to post.
+        </div>
   
-        <p class="subtitle is-size-7" style=color:rgb(199,91,81);>
+        <!-- <p class="subtitle is-size-7" style=color:rgb(199,91,81);>
           *Note: You must fill all fields in order to post.
-       </p>
+       </p> -->
         <div class="field">
           <div class="control">
             <input type="submit" @click="add_post" value="Post" class="button is-primary is-light">
@@ -375,5 +382,6 @@
   let edit_post_url = "[[=XML(edit_post_url)]]";
 </script>
 <script src="js/index.js"></script>
+
 [[end]]
 

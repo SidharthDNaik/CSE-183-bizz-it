@@ -72,7 +72,6 @@ def load_posts():
 def add_post():
     name = get_name()
     email = get_user_email()
-    # p = db.posts[post_id]
     if(request.json.get('title') != "" and request.json.get('content') != "" and request.json.get('location') != ""):
         id = db.posts.insert(
             title=request.json.get('title'),
