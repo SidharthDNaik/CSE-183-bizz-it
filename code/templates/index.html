@@ -4,81 +4,41 @@
 [v-cloak] {
      display: none;
 }
-div.pac-container {
-    z-index: 99999999999 !important;
-}
 </style>
 
-<div class="section"style=background-color:rgb(164,215,236); id="vue-target" v-cloak>
-  <input id="autocomplete" placeholder="Enter a place" type="text" />
-  <div class="container">
-    <div class="box" style=background-color:rgb(255,254,211);>
-      <nav class="level">
-        <!-- Left side -->
-        <div class="level-left">
-          <figure class="image is-128x128 ">
-            <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
-          </figure>
-          <div class="section">
-            <h1 class="title is-size-1">Bizzit</h1>
-            <p class="subtitle is-size-5">
-              A place for small businesses to grow.
-            </p>        
-          </div>
-        </div>
-
-          <div class="columns block">
-            <div class="column">
-              <p class="control has-icons-right">
-                <input class="input" type="text" v-model="post_search" placeholder="Search posts" @keyup="search"/>
-                <span class="icon is-small is-right">
-                  <i class="fa fa-search"></i>
-                </span>
-              </p>
-            </div>
-            <div class="column is-narrow">
-              <button class="button" @click="clear_search">
-                <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
-              </button>
-            </div>
-          </div>
-     </nav>
-    </div>
-  </div>
+<div class="section" style="background-color:rgb(168, 204, 235);" id="vue-target" v-cloak>
+  <div class="container is-max-desktop">
 
 
   <div class="container block">
+    <div class="container block"></div>
+    
+    <div class="columns block">
 
-    <div class="container block">
-        <!-- Return user name -->
-      [[if email:]]
-      <!-- the user is logged in -->
-      <div class="container block">
-        <div class="box is-narrow" style=background-color:rgb(252,180,174);> 
-
-        Welcome, [[=name]]!
-        
-        </div>
-        
-
-      </div>
-        
-      [[else:]]
-      <!-- the user is not logged in -->
-      <div class="container block">
-        <div class="box is-narrow" style=background-color:rgb(252,180,174);> 
-        Log in to post and like.
-      </div>
-    </div>
-      [[pass]]
-    </div>
     [[if email:]]
     <div v-if="!post_mode">
-      <button @click="set_post_status(true)" class="button is-primary is-light" >
-        <i class="fa fa-plus fa-fw"></i> 
-      </button>
+      <div class="column">
+        <button @click="set_post_status(true)" class="button is-warning " >
+          <i class="fa fa-plus fa-fw"></i> 
+        </button>
+      </div>
+      
     </div>
     [[pass]]
+      <div class="column">
+        <p class="control has-icons-right">
+          <input class="input" type="text" v-model="post_search" placeholder="Search posts" @keyup="search"/>
+          <span class="icon is-small is-right">
+            <i class="fa fa-search"></i>
+          </span>
+        </p>
+      </div>
+      <div class="column is-narrow">
+        <button class="button is-warning " @click="clear_search">
+          <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
+        </button>
+      </div>
+    </div>
   </div>
 
   <div v-if="post_mode" class="container block">
@@ -88,8 +48,8 @@ div.pac-container {
         <!-- This looks like a form, but is not.  We just need the inputs. -->
         <div class="field">
   
-          <p class="title is-size-4 has-text-black">
-            New Post
+          <p class="subtitle is-size-4 has-text-black">
+            New Post:
          </p>
   
           <div class="container block">
@@ -119,22 +79,6 @@ div.pac-container {
             </div>
           </div>
           
-          <div class="container block">
-            <p class="subtitle is-size-5">
-              Category:
-            </p>
-            <div class="is-grouped">
-                <button @click="get_category('Restaurants')" class="button is-link is-light is-outlined">Restaurants</button>
-                <button @click="get_category('Bakeries')" class="button is-link is-light is-outlined">Bakeries</button>
-                <button @click="get_category('Clothing')" class="button is-link is-light is-outlined">Clothing</button>
-                <button @click="get_category('Art')" class="button is-link is-light is-outlined">Art</button>
-                <button @click="get_category('Home')" class="button is-link is-light is-outlined">Home</button>
-                <button @click="get_category('Beauty')" class="button is-link is-light is-outlined">Beauty</button>
-                <button @click="get_category('Services')" class="button is-link is-light is-outlined">Services</button>
-                <button @click="get_category('Other')" class="button is-link is-light is-outlined">Other</button>
-            </div>
-          </div>
-          
         </div>
 
         <div class="notification is-danger is-light">
@@ -147,8 +91,8 @@ div.pac-container {
         
         <div class="field">
           <div class="control">
-            <input type="submit" @click="add_post" value="Post" class="button is-primary is-light">
-            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-danger is-light">
+            <input type="submit" @click="add_post" value="Post" class="button is-primary">
+            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning">
           </div>
         </div>
   
@@ -160,11 +104,19 @@ div.pac-container {
 
   <div class="container block">
     <table class="table is-striped is-fullwidth">
+      <!--
+      <span v-if="search_mode===true">
+        
+      <div v-for="p in posts_list" class="box">{{p}}
       <div v-for="r in rows.slice().reverse()" class="box">
-          <div class="title section">
-            
-              {{r.title}}
-          </div>
+      -->
+      <div v-for="r in rows.slice().reverse()" class="box" style="background-color:rgb(235, 242, 247);">
+
+        <div class="title">
+          <p>
+            {{r.title}}
+          </p>
+        </div>
         
         <div style="float:right;">
           <div v-if="r.email === '[[=email]]'">
@@ -201,17 +153,13 @@ div.pac-container {
           </div>
           <div class="content is-small">
             <p>
-              {{r.location}}
-            </p>
-          </div>
-          <div class="content is-small">
-            <p>
               {{r.category}}
+              {{r.name}}
             </p>
           </div>
           <div class="content is-small">
             <p>
-              {{r.name}}
+              {{r.location}}
             </p>
           </div>
           
@@ -219,17 +167,12 @@ div.pac-container {
           <div style="float:right;">
             <div v-if="r.email === '[[=email]]'">
 
-      
-            <button class="button is-info is-light" href="[[=URL('edit_post', signer=url_signer)]]">
-                <span class="icon"><i class="fa fa-fw fa-edit"></i></span>
-            </button>
-
-            
               
-              <button @click="delete_post(r._idx)" class="button is-danger is-light">
+              <button @click="delete_post(r._idx)" class="button is-danger">
                 <i class="fa fa-trash"></i>
               </button>
 
+              
             </div>
           </div>
         </span>
@@ -318,11 +261,11 @@ div.pac-container {
     </table>
   </div>
 </div>
-
 </div>
-  <div class="box" style=background-color:rgb(164,215,236);> 
+</div>
+  <div class="box" style="background-color:rgb(168, 204, 235);"> 
 
-    <div class="container block" style=background-color:rgb(164,215,236);>
+    <div class="container block">
       <nav class="level">
         <div class="level-left">
           <figure class="image is-96x96 ">
@@ -358,36 +301,4 @@ div.pac-container {
 
 </script>
 <script src="js/index.js"></script>
-
-<script>
-  function initAutocomplete(){
-    var input = document.getElementById('autocomplete');
-    var autocomplete = new google.maps.places.Autocomplete(input);
- 
-  }
-  
-  /*function activatePlacesSearch(){
-    var input = document.getElementById('auto');
-    var autocomplete = new google.maps.places.Autocomplete(input);
-
-  }*/
-
-  /*let autocomplete;
-  function initAutocomplete() {
-    autocomplete = new google.maps.places.Autocomplete(
-      document.getElementById('autocomplete'),
-      {
-        types: ['establishment'],
-        componentRestrictions: {'country': ['us']},
-        fields: ['place_id', 'geometry', 'name']
-      });
-      
-  }*/
-</script>
-<!---
-<script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfaQVuR2MyDiXTVRObaMRNkpi4gVLRR68&libraries=places&callback=activatePlacesSearch">
--->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfaQVuR2MyDiXTVRObaMRNkpi4gVLRR68&libraries=places&callback=initAutocomplete" async defer>
-</script>
 [[end]]
-

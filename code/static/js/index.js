@@ -26,7 +26,6 @@ let init = (app) => {
         uploaded: false,
         img_url: "",
         add_mode: false,
-        post_category: "",
     };
 
     // This is the file selected for upload.
@@ -120,7 +119,6 @@ let init = (app) => {
                 content: app.vue.add_content,
                 location: app.vue.add_location,
                 thumbnail: app.vue.add_thumbnail,
-                category: app.vue.post_category,
             }).then(
                 function (response){
                     app.vue.rows.push({
@@ -136,15 +134,12 @@ let init = (app) => {
                         likes: [],
                         string_of_dislikes: "",
                         category: app.vue.post_category,
-                        _state: {title: "clean", content: "clean", location: "clean"},
                     });
                     app.enumerate(app.vue.rows);
                     app.reset_form();
                     
                     app.set_post_status(false);
                     app.set_add_status(false);
-
-                    app.get_category;
                 });
     };
 
@@ -153,7 +148,6 @@ let init = (app) => {
         app.vue.add_content = "";
         app.vue.add_location = "";
         app.vue.name = "";
-        app.vue.post_category = "";
     };
 
     app.delete_post = function(row_idx) {
@@ -180,10 +174,6 @@ let init = (app) => {
 
     app.set_post_status = function (new_status) {
         app.vue.post_mode = new_status;
-    };
-
-    app.get_category = function (category_input) {
-        app.vue.post_category = category_input;
     };
 
     app.set_likes = function(row_idx, like_type){
