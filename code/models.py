@@ -50,8 +50,7 @@ db.define_table('posts',
                         'string',
                     ),
                     Field(
-                        'category',
-                        'string',
+                        'category','string', requires=IS_NOT_EMPTY(),
                     ),
                     Field(
                         'email',

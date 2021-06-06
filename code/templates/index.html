@@ -78,6 +78,22 @@
               <input class="input is-primary" type="text" v-model="add_location" placeholder="Enter your small business' address here">
             </div>
           </div>
+
+          <div class="container block">
+            <p class="subtitle is-size-5">
+              Category:
+            </p>
+            <div class="is-grouped">
+                <button @click="get_category('Restaurants')" class="button is-link is-light is-outlined">Restaurants</button>
+                <button @click="get_category('Bakeries')" class="button is-link is-light is-outlined">Bakeries</button>
+                <button @click="get_category('Clothing')" class="button is-link is-light is-outlined">Clothing</button>
+                <button @click="get_category('Art')" class="button is-link is-light is-outlined">Art</button>
+                <button @click="get_category('Home')" class="button is-link is-light is-outlined">Home</button>
+                <button @click="get_category('Beauty')" class="button is-link is-light is-outlined">Beauty</button>
+                <button @click="get_category('Services')" class="button is-link is-light is-outlined">Services</button>
+                <button @click="get_category('Other')" class="button is-link is-light is-outlined">Other</button>
+            </div>
+          </div>
           
         </div>
 
@@ -87,7 +103,7 @@
           </span>
           <strong>*Note:</strong> You must fill all fields in order to post.
         </div>
-        
+  
         
         <div class="field">
           <div class="control">
@@ -153,16 +169,19 @@
           </div>
           <div class="content is-small">
             <p>
-              {{r.category}}
-              {{r.name}}
+              {{r.location}}
             </p>
           </div>
           <div class="content is-small">
             <p>
-              {{r.location}}
+              {{r.category}}
             </p>
           </div>
-          
+          <div class="content is-small">
+            <p>
+              {{r.name}}
+            </p>
+          </div>
 
           <div style="float:right;">
             <div v-if="r.email === '[[=email]]'">
@@ -171,7 +190,6 @@
               <button @click="delete_post(r._idx)" class="button is-danger">
                 <i class="fa fa-trash"></i>
               </button>
-
               
             </div>
           </div>
@@ -298,7 +316,6 @@
   let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
   let search_url = "[[=XML(search_url)]]";
   let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
-
 </script>
 <script src="js/index.js"></script>
 [[end]]

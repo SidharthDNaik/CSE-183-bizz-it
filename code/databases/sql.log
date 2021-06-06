@@ -466,3 +466,33 @@ success!
 success!
 success!
 success!
+timestamp: 2021-06-06T03:33:16.998943
+ALTER TABLE "posts" ADD "category" CHAR(512);
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!

@@ -33,10 +33,6 @@ from py4web.utils.auth import Auth
 from .models import get_user_email, get_name
 import uuid 
 import random 
-from py4web.utils.form import Form, FormStyleBulma
-from .common import Field
-import time
-from pydal.validators import *
 import time
 
 url_signer = URLSigner(session)
@@ -60,6 +56,7 @@ def index():
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
         upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
+        
        
     )
 
@@ -75,28 +72,12 @@ def load_posts():
 @action('add_post', method='POST')
 @action.uses(auth, url_signer.verify(), db)
 def add_post():
-    name = get_name()
-    email = get_user_email()
-    if(request.json.get('title') != "" and request.json.get('content') != "" and request.json.get('location') != "" and request.json.get('category') != ""):
-        id = db.posts.insert(
-            title=request.json.get('title'),
-            content=request.json.get('content'),
-            location=request.json.get('location'),
-            category=request.json.get('category'),
-            name=name,
-            email = email,
-        )
-        return dict(
-            id=id,
-            name=name,
-            email=email,
-        )
-    else:
-        print("You must fill all the fields to post!")
-        id = request.params.get('id')
-        assert id is not None
-        db(db.posts.id == id).delete()
-        return "failed to post"
+    # form = Form(db.auth)
+    # form = Form(db, extra_fields=True, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+    # smallBiz = auth.small_business
+    # show_delete = db.auth_user.email == get_user_email()
+    # smallBiz = db.auth_user.small_business
+    # auth = Auth(session, db, define_tables=False, extra_fields=[Field('small_business', 'boolean')])
 
     # print(auth.extra_auth_user_fields)
     # print(db.auth_user.small_business)
@@ -107,6 +88,7 @@ def add_post():
         title=request.json.get('title'),
         content=request.json.get('content'),
         location=request.json.get('location'),
+        category=request.json.get('category'),
         name=name,
         email = email,
     )
@@ -187,13 +169,23 @@ def get_likes_stream():
 
 # This controller is used to go to the explore map page
 @action('explore')
-@action.uses(auth, url_signer, 'explore.html')
+@action.uses(db, auth.user, url_signer, 'explore.html')
 def explore():
-  
+    #rows = db(db.posts).select(db.posts.location).as_list()
+    rows = db(db.posts).select(db.posts.location).as_list()
+
+    locations = ""
+    for row in rows:
+        for k in row:
+            locations += row.get(k) + "!"
+
+    
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
         name=get_name(),
+        locations=locations,
+        rows=rows,
     )
 
 # This controller is used to initialize the database.
@@ -237,7 +229,7 @@ def search():
     if t:
         tt = t.strip()
         
-        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)))
+        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)) | (db.posts.category.contains(tt)))
         
     else: 
         q = db.posts.id > 0
@@ -245,6 +237,8 @@ def search():
     rows = db(q).select().as_list()
     return dict(rows=rows)
     
+
+
 @action('upload_thumbnail', method="POST")
 @action.uses(auth, url_signer.verify(), db)
 def upload_thumbnail():

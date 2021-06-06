@@ -26,6 +26,7 @@ let init = (app) => {
         uploaded: false,
         img_url: "",
         add_mode: false,
+        post_category: "",
     };
 
     // This is the file selected for upload.
@@ -37,6 +38,7 @@ let init = (app) => {
         a.map((e) => {e._idx = k++;});
         return a;
     };
+
 
     app.select_file = function (event) {
         // Reads the file.
@@ -119,6 +121,7 @@ let init = (app) => {
                 content: app.vue.add_content,
                 location: app.vue.add_location,
                 thumbnail: app.vue.add_thumbnail,
+                category: app.vue.post_category,
             }).then(
                 function (response){
                     app.vue.rows.push({
@@ -140,6 +143,8 @@ let init = (app) => {
                     
                     app.set_post_status(false);
                     app.set_add_status(false);
+
+                    app.get_category;
                 });
     };
 
@@ -148,6 +153,7 @@ let init = (app) => {
         app.vue.add_content = "";
         app.vue.add_location = "";
         app.vue.name = "";
+        app.vue.post_category = "";
     };
 
     app.delete_post = function(row_idx) {
@@ -174,6 +180,10 @@ let init = (app) => {
 
     app.set_post_status = function (new_status) {
         app.vue.post_mode = new_status;
+    };
+
+    app.get_category = function (category_input) {
+        app.vue.post_category = category_input;
     };
 
     app.set_likes = function(row_idx, like_type){
@@ -232,6 +242,7 @@ let init = (app) => {
         let row = app.vue.rows[row_idx];
         Vue.set(row, 'comments_a_viewable', !row.comments_a_viewable);
     };
+
 
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
