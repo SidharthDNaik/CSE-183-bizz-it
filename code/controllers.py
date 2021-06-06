@@ -43,10 +43,13 @@ url_signer = URLSigner(session)
 @action.uses(auth, url_signer, 'index.html')
 def index():
     show_delete = db.auth_user.email == get_user_email()
+    rows = db(db.posts).select().as_list()
+    # rows = db(db.posts.email == get_user_email()).select().as_list()
     
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
+        rows=rows,
         name=get_name(),
         url_signer=url_signer,
         show_delete = show_delete,
@@ -270,11 +273,11 @@ def edit(id=None):
     #We read the product being edited from the db
     b = db.posts[id]
 
-    if b is None or get_user_email() != b.user_email:
-        redirect(URL('index'))
+    # if b is None or get_user_email() != b.user_email:
+    #     redirect(URL('index'))
     #Edit form: it has records
     form = Form(db.posts, record=b, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
     if form.accepted:
         #The update already happened
         redirect(URL('index'))
-    return dict(form=form)
+    return dict(form=form, id=id)
