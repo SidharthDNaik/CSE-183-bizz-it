@@ -367,3 +367,99 @@ success!
 success!
 success!
 success!
+success!
+success!
+success!
+timestamp: 2021-06-04T22:03:13.240687
+ALTER TABLE "auth_user" ADD "username" CHAR(512) UNIQUE;
+timestamp: 2021-06-04T22:03:44.962460
+ALTER TABLE "auth_user" ADD "username" CHAR(512) UNIQUE;
+timestamp: 2021-06-04T22:05:17.509721
+ALTER TABLE "auth_user" ADD "username" CHAR(512) UNIQUE;
+timestamp: 2021-06-04T22:06:19.682277
+ALTER TABLE "auth_user" ADD "smallbizz" CHAR(512);
+success!
+success!
+timestamp: 2021-06-04T22:08:17.485364
+ALTER TABLE "auth_user" ADD "small_bizz" CHAR(512);
+success!
+success!
+timestamp: 2021-06-04T22:09:50.652074
+ALTER TABLE "auth_user" ADD "small_business" CHAR(512);
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!

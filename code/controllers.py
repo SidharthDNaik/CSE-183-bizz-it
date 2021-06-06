@@ -25,10 +25,11 @@ session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
 
-from py4web import action, request, abort, redirect, URL
+from py4web import action, request, abort, redirect, URL, Field
 from yatl.helpers import A
 from .common import db, session, T, cache, auth, logger, authenticated, unauthenticated, flash
 from py4web.utils.url_signer import URLSigner
+from py4web.utils.auth import Auth
 from .models import get_user_email, get_name
 import uuid 
 import random 
@@ -40,7 +41,8 @@ url_signer = URLSigner(session)
 @action.uses(auth, url_signer, 'index.html')
 def index():
     show_delete = db.auth_user.email == get_user_email()
-    
+    # print(db.auth_user.small_business)
+    # print(auth.extra_fields)
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
@@ -70,28 +72,31 @@ def load_posts():
 @action('add_post', method='POST')
 @action.uses(auth, url_signer.verify(), db)
 def add_post():
+    # form = Form(db.auth)
+    # form = Form(db, extra_fields=True, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+    # smallBiz = auth.small_business
+    # show_delete = db.auth_user.email == get_user_email()
+    # smallBiz = db.auth_user.small_business
+    # auth = Auth(session, db, define_tables=False, extra_fields=[Field('small_business', 'boolean')])
+
+    # print(auth.extra_auth_user_fields)
+    # print(db.auth_user.small_business)
+
     name = get_name()
     email = get_user_email()
-    # p = db.posts[post_id]
-    if(request.json.get('title') != "" and request.json.get('content') != "" and request.json.get('location') != ""):
-        id = db.posts.insert(
-            title=request.json.get('title'),
-            content=request.json.get('content'),
-            location=request.json.get('location'),
-            name=name,
-            email = email,
-        )
-        return dict(
-            id=id,
-            name=name,
-            email=email,
-        )
-    else:
-        print("You must fill all the fields to post!")
-        id = request.params.get('id')
-        assert id is not None
-        db(db.posts.id == id).delete()
-        return "failed to post"
+    id = db.posts.insert(
+        title=request.json.get('title'),
+        content=request.json.get('content'),
+        location=request.json.get('location'),
+        name=name,
+        email = email,
+    )
+    return dict(
+        # smallBiz=smallBiz,
+        id=id,
+        name=name,
+        email=email,
+    )
 
 @action('delete_post')
 @action.uses(auth, url_signer.verify(), db)
@@ -163,7 +168,7 @@ def get_likes_stream():
 
 # This controller is used to go to the explore map page
 @action('explore')
-@action.uses(auth.user, url_signer, 'explore.html')
+@action.uses(auth, url_signer, 'explore.html')
 def explore():
   
     return dict(
@@ -191,6 +196,8 @@ def profile():
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
         upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
+        edit_post_url = URL('edit_post', signer=url_signer),
+
     ) 
 
 
