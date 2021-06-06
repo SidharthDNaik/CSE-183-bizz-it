@@ -1,0 +1,97 @@
+[[extend 'layout.html']]
+
+<div class="section"style=background-color:rgb(164,215,236); id="vue-target" v-cloak>
+
+    <div class="box" style=background-color:rgb(255,254,211);>
+      <div class="form">
+        <!-- This looks like a form, but is not.  We just need the inputs. -->
+        <div class="field">
+  
+          <p class="subtitle is-size-4 has-text-black">
+            New Post:
+         </p>
+  
+          <div class="container block">
+            <div class="control">
+              <p class="subtitle is-size-5">
+                Title:
+             </p>
+              <input class="input is-info" type="text" v-model="add_title" placeholder="Enter a title for your post here">
+            </div>
+          </div>
+          
+          <div class="container block">
+            <div class="control">
+              <p class="subtitle is-size-5">
+                Caption:
+             </p>
+              <textarea class="textarea is-info" v-model="add_content" class="textarea" placeholder="Enter post caption here"></textarea>
+            </div>
+          </div>
+  
+          <div class="container block">
+            <div class="control">
+              <p class="subtitle is-size-5">
+                Location:
+             </p>
+              <input class="input is-primary" type="text" v-model="add_location" placeholder="Enter your small business' address here">
+            </div>
+          </div>
+          
+          <div class="container block">
+            <p class="subtitle is-size-5">
+              Category:
+            </p>
+            <div class="is-grouped">
+                <button @click="get_category('Restaurants')" class="button is-link is-outlined">Restaurants</button>
+                <button @click="get_category('Bakeries')" class="button is-link is-outlined">Bakeries</button>
+                <button @click="get_category('Clothing')" class="button is-link is-outlined">Clothing</button>
+                <button @click="get_category('Art')" class="button is-link is-outlined">Art</button>
+                <button @click="get_category('Home')" class="button is-link is-outlined">Home</button>
+                <button @click="get_category('Beauty')" class="button is-link is-outlined">Beauty</button>
+                <button @click="get_category('Services')" class="button is-link is-outlined">Services</button>
+                <button @click="get_category('Other')" class="button is-link is-outlined">Other</button>
+            </div>
+          </div>
+          
+        </div>
+        
+        
+        <div class="field">
+          <div class="control">
+            <!-- <input type="submit" @click="add_post" value="Post" class="button is-primary"> -->
+            <!-- <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning"> -->
+          </div>
+        </div>
+  
+      </div>
+    </div>
+    
+
+
+
+</div>
+  <div class="box" style=background-color:rgb(164,215,236);> 
+
+    <div class="container block" style=background-color:rgb(164,215,236);>
+      <nav class="level">
+        <div class="level-left">
+          <figure class="image is-96x96 ">
+            <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
+         </figure>
+        <div class="section">
+          <h1 class="title is-size-3" style=color:white;>Bizzit</h1>
+        </div>
+       </div>
+       <div class="level-right ">
+        <p class="text is-size-6" style=color:white;>
+          A place for small businesses to grow.
+       </p>
+       </div>
+      </nav>
+    </div>
+  
+  </div>
+
+
+  

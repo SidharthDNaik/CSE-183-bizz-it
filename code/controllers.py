@@ -32,7 +32,10 @@ from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_name
 import uuid 
 import random 
+from py4web.utils.form import Form, FormStyleBulma
+from .common import Field
 import time
+from pydal.validators import *
 
 url_signer = URLSigner(session)
 
@@ -40,11 +43,15 @@ url_signer = URLSigner(session)
 @action.uses(auth, url_signer, 'index.html')
 def index():
     show_delete = db.auth_user.email == get_user_email()
+    rows = db(db.posts).select().as_list()
+    # rows = db(db.posts.email == get_user_email()).select().as_list()
     
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
+        rows=rows,
         name=get_name(),
+        url_signer=url_signer,
         show_delete = show_delete,
         set_likes_url = URL('set_likes', signer=url_signer),
         get_likes_url = URL('get_likes', signer=url_signer),
@@ -54,7 +61,6 @@ def index():
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
         upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
-        edit_post_url = URL('edit_post', signer=url_signer),
        
     )
 
@@ -66,18 +72,17 @@ def load_posts():
     return dict(
         rows= rows,
         )
-
-@action('add_post', method='POST')
+@action('add_post', method=["POST"])
 @action.uses(auth, url_signer.verify(), db)
 def add_post():
     name = get_name()
     email = get_user_email()
-    # p = db.posts[post_id]
-    if(request.json.get('title') != "" and request.json.get('content') != "" and request.json.get('location') != ""):
+    if(request.json.get('title') != "" and request.json.get('content') != "" and request.json.get('location') != "" and request.json.get('category') != ""):
         id = db.posts.insert(
             title=request.json.get('title'),
             content=request.json.get('content'),
             location=request.json.get('location'),
+            category=request.json.get('category'),
             name=name,
             email = email,
         )
@@ -92,6 +97,37 @@ def add_post():
         assert id is not None
         db(db.posts.id == id).delete()
         return "failed to post"
+
+@action('add_post_new', method=["POST"])
+@action.uses(db, session, auth.user, 'add_post.html')
+def add_post_new():
+    form = Form(db.posts, csrf_session=session, formstyle=FormStyleBulma)
+
+    name = get_name()
+    email = get_user_email()
+    id = db.posts.insert(
+        title=request.json.get('title'),
+        content=request.json.get('content'),
+        location=request.json.get('location'),
+        category=request.json.get('category'),
+        name=name,
+        email = email,
+    )
+    redirect(URL('index'))
+    return dict(
+        id=id,
+        name=name,
+        email=email,
+        form=form
+    )
+    # #Insert form: no records in it
+    # form = Form(db.posts, csrf_session=session, formstyle=FormStyleBulma)
+    # if form.accepted:
+    #     #redirect, the insertion already happened
+    #     redirect(URL('index')) #go back to index after insertion
+
+    # #Either this is a GET request, or this is a POST but not accepted = with errors
+    # return dict(form=form)
 
 @action('delete_post')
 @action.uses(auth, url_signer.verify(), db)
@@ -163,7 +199,7 @@ def get_likes_stream():
 
 # This controller is used to go to the explore map page
 @action('explore')
-@action.uses(auth, url_signer, 'explore.html')
+@action.uses(auth.user, url_signer, 'explore.html')
 def explore():
   
     return dict(
@@ -174,13 +210,35 @@ def explore():
 
 # This controller is used to initialize the database.
 @action('profile')
-@action.uses(auth, url_signer, 'profile.html')
+@action.uses(auth.user, url_signer, 'profile.html')
 def profile():
+    show_delete = db.auth_user.email == get_user_email()
+
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
         name=get_name(),
-    )   
+        show_delete = show_delete,
+        set_likes_url = URL('set_likes', signer=url_signer),
+        get_likes_url = URL('get_likes', signer=url_signer),
+        get_likes_stream_url = URL('get_likes_stream', signer=url_signer),
+        load_posts_url = URL('load_posts', signer=url_signer),
+        add_post_url = URL('add_post', signer=url_signer),
+        delete_post_url = URL('delete_post', signer=url_signer),
+        search_url = URL('search', signer=url_signer),
+        upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
+    ) 
+
+
+# About Bizzit page
+@action('about')
+@action.uses(auth, url_signer, 'about.html')
+def about():
+    return dict(
+        # This is the signed URL for the callback.
+        email=get_user_email(),
+        name=get_name(),
+    ) 
 
 @action('search')
 @action.uses(db, url_signer.verify())
@@ -189,7 +247,7 @@ def search():
     if t:
         tt = t.strip()
         
-        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)))
+        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)) | (db.posts.category.contains(tt)))
         
     else: 
         q = db.posts.id > 0
@@ -208,13 +266,18 @@ def upload_thumbnail():
     redirect(URL('index'))
     return "ok"
 
-@action('edit_post', method="POST")
-@action.uses(url_signer.verify(), db)
-def edit_post():
-    # Updates the db record.
-    id = request.json.get("id")
-    field = request.json.get("field")
-    value = request.json.get("value")
-    db(db.posts.id == id).update(**{field: value})
-    time.sleep(0.2) # debugging
-    return "ok"
+@action('edit_post/<id:int>', method=["GET", "POST"])
+@action.uses(db, session, auth.user, url_signer.verify(), 'edit_post.html')
+def edit(id=None):
+    assert id is not None
+    #We read the product being edited from the db
+    b = db.posts[id]
+
+    # if b is None or get_user_email() != b.user_email:
+    #     redirect(URL('index'))
+    #Edit form: it has records
+    form = Form(db.posts, record=b, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+    if form.accepted:
+        #The update already happened
+        redirect(URL('index'))
+    return dict(form=form, id=id)
