@@ -4,29 +4,12 @@
   [v-cloak] {
        display: none;
   }
-
-  #map{
-    height:400px;
-    width:100%;
-  }
   </style>
 
 <div class="section">
 
   <h2 class="title is-3">Map</h2>
-  <div class="container">
-   <!--
-    <iframe
-      width="600"
-      height="450"
-      style="border:0"
-      loading="lazy"
-      allowfullscreen
-      src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCfaQVuR2MyDiXTVRObaMRNkpi4gVLRR68&q=Space+Needle,Seattle+WA">
-    </iframe>
-  -->
-    <div id="map"></div>
-  </div>
+  
   <a class="button is-success" href="[[=URL('index')]]">
     <span><i class="fa fa-backward"> </i> Back</span>
   </a>
@@ -35,27 +18,9 @@
 
 [[block page_scripts]]
 <!-- Loads the index-specific js for Vue -->
-<!--
-<script src="js/explore.js"></script>
--->
 <script>
-  function initMap(){
-    //map options
-    var options = {
-      zoom:8,
-      center:{lat:36.9741,lng:-122.0308}
-    }
-    //new map
-    var map = new
-    google.maps.Map(document.getElementById('map'), options);
-
-    //add marker
-    var marker = new google.maps.Marker({
-      position:{lat:36.9741,lng:-122.0308},
-      map:map
-    });
-  }
+  
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfaQVuR2MyDiXTVRObaMRNkpi4gVLRR68&callback=initMap&libraries=&v=weekly" async></script>
+<script src="js/explore.js"></script>
 [[end]]
 
