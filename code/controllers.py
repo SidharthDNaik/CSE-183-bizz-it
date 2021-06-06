@@ -171,18 +171,19 @@ def get_likes_stream():
 @action('explore')
 @action.uses(db, auth.user, url_signer, 'explore.html')
 def explore():
-    #rows = db(db.posts).select(db.posts.location).as_list()
     rows = db(db.posts).select(db.posts.location).as_list()
 
     locations = ""
+    googlemaps = []
     for row in rows:
         for k in row:
             locations += row.get(k) + "!"
-
+            googlemaps.append(row.get(k))
     
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
+        googlemaps=googlemaps,
         name=get_name(),
         locations=locations,
         rows=rows,
