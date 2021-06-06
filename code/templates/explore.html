@@ -11,51 +11,85 @@
   }
   </style>
 
-<div class="section">
-
+<div class="section" style="background-color:rgb(168, 204, 235);">
   <h2 class="title is-3">Map</h2>
-  <div class="container">
-   <!--
-    <iframe
-      width="600"
-      height="450"
-      style="border:0"
-      loading="lazy"
-      allowfullscreen
-      src="https://www.google.com/maps/embed/v1/place?key=AIzaSyCfaQVuR2MyDiXTVRObaMRNkpi4gVLRR68&q=Space+Needle,Seattle+WA">
-    </iframe>
-  -->
-    <div id="map"></div>
-  </div>
+
   <a class="button is-success" href="[[=URL('index')]]">
     <span><i class="fa fa-backward"> </i> Back</span>
   </a>
+
+  
+  <div class="container">
+    <div id="map"></div>
+  </div>
+
+  <div class ="section">
+
+    <div class="box" style="background-color:rgb(235, 242, 247);">
+  
+      <div class="title"> Small Business Addresses: </div>
+  
+      [[for row in googlemaps:]]
+  
+      <div class="box">
+  
+        <div class ="section">
+          <a href="[[='https://www.google.com/maps/place/'+row]]">Open Google Maps to: [[= row]]</a>
+        </div>
+            
+      </div>
+      
+        
+        
+      [[pass]]
+    
+    </div>
+  
+  
+  </div>
+  
 </div>
 
 
-[[block page_scripts]]
-<!-- Loads the index-specific js for Vue -->
-<!--
-<script src="js/explore.js"></script>
--->
-<script>
-  function initMap(){
-    //map options
-    var options = {
-      zoom:8,
-      center:{lat:36.9741,lng:-122.0308}
-    }
-    //new map
-    var map = new
-    google.maps.Map(document.getElementById('map'), options);
 
-    //add marker
-    var marker = new google.maps.Marker({
-      position:{lat:36.9741,lng:-122.0308},
-      map:map
-    });
-  }
+[[block page_scripts]]
+
+<script type="text/javascript">  
+    var loc = "[[=locations ]]"
+    var locations_arr = loc.split("!");
+
+    var geocoder;
+    var map;
+    var address;  
+    function initMap() {
+      var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 8,
+        center: {lat: -34.397, lng: 150.644}
+      });
+
+      geocoder = new google.maps.Geocoder();
+      for(var i = 0; i < locations_arr.length; i++){
+        address = locations_arr[i];
+        codeAddress(geocoder, map);
+        }
+      }
+
+    function codeAddress(geocoder, map) {
+      geocoder.geocode({'address': address}, function(results, status) {
+        if (status === 'OK') {
+          map.setCenter(results[0].geometry.location);
+          var marker = new google.maps.Marker({
+              map: map,
+              position: results[0].geometry.location
+            });
+        } else {
+            //alert('Geocode was not successful for the following reason: ' + status);
+        }
+      });
+    }
+    
 </script>
+
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfaQVuR2MyDiXTVRObaMRNkpi4gVLRR68&callback=initMap&libraries=&v=weekly" async></script>
 [[end]]
 

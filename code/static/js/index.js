@@ -39,6 +39,7 @@ let init = (app) => {
         return a;
     };
 
+
     app.select_file = function (event) {
         // Reads the file.
         let input = event.target;
@@ -136,7 +137,6 @@ let init = (app) => {
                         likes: [],
                         string_of_dislikes: "",
                         category: app.vue.post_category,
-                        _state: {title: "clean", content: "clean", location: "clean"},
                     });
                     app.enumerate(app.vue.rows);
                     app.reset_form();
@@ -242,6 +242,7 @@ let init = (app) => {
         let row = app.vue.rows[row_idx];
         Vue.set(row, 'comments_a_viewable', !row.comments_a_viewable);
     };
+
 
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
