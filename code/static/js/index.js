@@ -38,15 +38,6 @@ let init = (app) => {
         return a;
     };
 
-     // This decorates the rows (e.g. that come from the server)
-    // adding information on their state:
-    // - clean: read-only, the value is saved on the server
-    // - edit : the value is being edited
-    // - pending : a save is pending.
-    app.decorate = (a) => {
-        a.map((e) => {e._state = {title: "clean", content: "clean", location: "clean"} ;});
-        return a;
-    }
 
     app.select_file = function (event) {
         // Reads the file.
@@ -67,27 +58,6 @@ let init = (app) => {
         app.vue.uploading = false;
         app.vue.uploaded = true;
     };
-
-    app.start_edit = function (row_idx, fn) {
-        let row = app.vue.rows[row_idx];
-        app.vue.rows[row_idx]._state[fn] = "edit";
-    };
-
-    app.stop_edit = function (row_idx, fn) {
-        let row = app.vue.rows[row_idx];
-        if (row._state[fn] === "edit") {
-            row._state[fn] = "pending";
-            axios.post(edit_post_url,
-                {
-                    id: row.id,
-                    field: fn,
-                    value: row[fn], // row.first_name
-                }).then(function (result) {
-                row._state[fn] = "clean";
-            });
-        }
-        // If I was not editing, there is nothing that needs saving.
-    }
 
     app.upload_file = function (event, row_idx) {
         let input = event.target;
@@ -280,8 +250,6 @@ let init = (app) => {
         clear_search: app.clear_search,
         select_file: app.select_file,
         upload_file: app.upload_file,
-        start_edit: app.start_edit,
-        stop_edit: app.stop_edit,
     };
 
     // This creates the Vue instance.
@@ -298,7 +266,7 @@ let init = (app) => {
     app.init = () => {
         axios.get(search_url).then(
         function (response) {
-            app.vue.rows = app.decorate(app.commentable(app.likes_stream(app.likeable(app.enumerate(response.data.rows)))));
+            app.vue.rows = app.commentable(app.likes_stream(app.likeable(app.enumerate(response.data.rows))));
         }).then(
             () => {
                 for(let row of app.vue.rows){

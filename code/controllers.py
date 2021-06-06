@@ -56,7 +56,7 @@ def index():
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
         upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
-        edit_post_url = URL('edit_post', signer=url_signer),
+        
        
     )
 
@@ -196,7 +196,7 @@ def profile():
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
         upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
-        edit_post_url = URL('edit_post', signer=url_signer),
+        
 
     ) 
 
@@ -235,15 +235,4 @@ def upload_thumbnail():
     thumbnail = request.json.get("thumbnail")
     db(db.posts.id == post_id).update(thumbnail=thumbnail)
     redirect(URL('index'))
-    return "ok"
-
-@action('edit_post', method="POST")
-@action.uses(url_signer.verify(), db)
-def edit_post():
-    # Updates the db record.
-    id = request.json.get("id")
-    field = request.json.get("field")
-    value = request.json.get("value")
-    db(db.posts.id == id).update(**{field: value})
-    time.sleep(0.2) # debugging
     return "ok"
