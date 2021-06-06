@@ -1,11 +1,5 @@
 [[extend 'layout.html']]
 
-<style>
-[v-cloak] {
-     display: none;
-}
-</style>
-
 <div class="section"style=background-color:rgb(164,215,236); id="vue-target" v-cloak>
 
     <div class="box" style=background-color:rgb(255,254,211);>
@@ -100,37 +94,4 @@
   </div>
 
 
-  [[block page_scripts]]
-  <!-- Loads the index-specific js for Vue -->
-  <script>
-    let add_post_url = "[[=XML(add_post_url)]]";
-    let delete_post_url = "[[=XML(delete_post_url)]]";
-    let load_posts_url = "[[=XML(load_posts_url)]]";
-    let user_name = "[[=name]]";
-    let set_likes_url = "[[=XML(set_likes_url)]]";
-    let get_likes_url = "[[=XML(get_likes_url)]]";
-    let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
-    let search_url = "[[=XML(search_url)]]";
-    let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
-  </script>
-  <script src="js/index.js"></script>
   
-  [[end]]
-
-
-    
-
-<!-- <div class="section" style=background-color:rgb(164,215,236);>
-
-    <div class="box" style=background-color:rgb(255,254,211);> 
-        <h1 class="title">New Post</h1>
-        
-        [[=form]]
-
-        <a class="button is-success is-light" href="[[=URL('index')]]">
-            <span><i class="fa fa-backward"> </i> Back</span>
-        </a>
-    </div>
-  
-</div> -->
-

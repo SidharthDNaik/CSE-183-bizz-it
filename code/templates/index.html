@@ -81,14 +81,6 @@ div.pac-container {
     [[pass]]
   </div>
 
-  <!-- <div class="container block">
-
-    <a class="button is-primary is-light" href="[[=URL('add_post_new', signer=url_signer)]]">
-      <i class="fa fa-plus fa-fw"></i> 
-   </a>
-
-  </div> -->
-
   <div v-if="post_mode" class="container block">
 
     <div class="box" style=background-color:rgb(255,254,211);>
@@ -168,19 +160,11 @@ div.pac-container {
 
   <div class="container block">
     <table class="table is-striped is-fullwidth">
-      <!--
-      <span v-if="search_mode===true">
-        
-      <div v-for="p in posts_list" class="box">{{p}}
       <div v-for="r in rows.slice().reverse()" class="box">
-      -->
-      <div v-for="r in rows.slice().reverse()" class="box">
-
-        <div class="title">
-          <p>
-            {{r.title}}
-          </p>
-        </div>
+          <div class="title section">
+            
+              {{r.title}}
+          </div>
         
         <div style="float:right;">
           <div v-if="r.email === '[[=email]]'">
@@ -235,11 +219,17 @@ div.pac-container {
           <div style="float:right;">
             <div v-if="r.email === '[[=email]]'">
 
+      
+            <button class="button is-info is-light" href="[[=URL('edit_post', signer=url_signer)]]">
+                <span class="icon"><i class="fa fa-fw fa-edit"></i></span>
+            </button>
+
+            
               
-              <button @click="delete_post(r._idx)" class="button is-danger">
+              <button @click="delete_post(r._idx)" class="button is-danger is-light">
                 <i class="fa fa-trash"></i>
               </button>
-              
+
             </div>
           </div>
         </span>
@@ -365,6 +355,7 @@ div.pac-container {
   let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
   let search_url = "[[=XML(search_url)]]";
   let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
+
 </script>
 <script src="js/index.js"></script>
 

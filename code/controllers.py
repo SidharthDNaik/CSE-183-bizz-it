@@ -94,24 +94,8 @@ def add_post():
         assert id is not None
         db(db.posts.id == id).delete()
         return "failed to post"
-    # name = get_name()
-    # email = get_user_email()
-    # id = db.posts.insert(
-    #     title=request.json.get('title'),
-    #     content=request.json.get('content'),
-    #     location=request.json.get('location'),
-    #     category=request.json.get('category'),
-    #     name=name,
-    #     email = email,
-    # )
-    # redirect(URL('index'))
-    # return dict(
-    #     id=id,
-    #     name=name,
-    #     email=email,
-    # )
 
-@action('add_post_new', method=["GET", "POST"])
+@action('add_post_new', method=["POST"])
 @action.uses(db, session, auth.user, 'add_post.html')
 def add_post_new():
     form = Form(db.posts, csrf_session=session, formstyle=FormStyleBulma)
@@ -278,3 +262,19 @@ def upload_thumbnail():
     db(db.posts.id == post_id).update(thumbnail=thumbnail)
     redirect(URL('index'))
     return "ok"
+
+@action('edit_post/<id:int>', method=["GET", "POST"])
+@action.uses(db, session, auth.user, url_signer.verify(), 'edit_post.html')
+def edit(id=None):
+    assert id is not None
+    #We read the product being edited from the db
+    b = db.posts[id]
+
+    if b is None or get_user_email() != b.user_email:
+        redirect(URL('index'))
+    #Edit form: it has records
+    form = Form(db.posts, record=b, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+    if form.accepted:
+        #The update already happened
+        redirect(URL('index'))
+    return dict(form=form)
