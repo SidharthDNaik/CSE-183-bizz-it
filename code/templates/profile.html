@@ -1,0 +1,275 @@
+[[extend 'layout.html']]
+
+<style>
+[v-cloak] {
+     display: none;
+}
+</style>
+
+<div class="section"style=background-color:rgb(164,215,236); id="vue-target" v-cloak>
+  <div class="container is-max-desktop">
+
+  <div class="container">
+    <div class="box" style=background-color:rgb(255,254,211);>
+       <!-- Main container -->
+       <nav class="level">
+          <!-- Left side -->
+          <div class="level-left">
+            <figure class="image is-128x128 ">
+              <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
+           </figure>
+           <div class="section">
+            <h2 class="title is-size-1">[[=name]]'s Profile</h2>
+          </div>
+          </div>
+
+          <div class="level-middle">
+            <div class="columns block">
+              <div class="column">
+                <p class="control has-icons-right">
+                  <input class="input" type="text" v-model="post_search" placeholder="Search my posts" @keyup="search"/>
+                  <span class="icon is-small is-right">
+                    <i class="fa fa-search"></i>
+                  </span>
+                </p>
+              </div>
+              <div class="column is-narrow">
+                <button class="button" @click="clear_search">
+                  <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+          
+       </nav>
+    </div>
+ </div>
+
+  <div class="container block">
+
+    <div class="container block">
+        <!-- Return user name -->
+      [[if email:]]
+      <!-- the user is logged in -->
+      <div class="container block">
+        <div class="box is-narrow" style=background-color:rgb(252,180,174);> 
+          My Posts
+        </div>
+        
+
+      </div>
+        
+      [[else:]]
+      <!-- the user is not logged in -->
+      <div class="container block">
+        <div class="box is-narrow" style=background-color:rgb(252,180,174);> 
+        Log in to post and like.
+      </div>
+    </div>
+      [[pass]]
+    </div>
+    [[if email:]]
+    
+    [[pass]]
+  </div>
+
+  <div class="container block">
+    <table class="table is-striped is-fullwidth">
+      <!--
+      <span v-if="search_mode===true">
+        
+      <div v-for="p in posts_list" class="box">{{p}}
+      <div v-for="r in rows.slice().reverse()" class="box">
+      -->
+      <div v-for="r in rows.slice().reverse()" class="box"v-if="r.email === '[[=email]]'">
+    
+
+        <div class="title">
+          <p>
+            {{r.title}}
+          </p>
+        </div>
+        
+        <div style="float:right;">
+          <div v-if="r.email === '[[=email]]'">
+            <div v-if="!r.thumbnail">
+              <p class="control">
+                <div class="file is-info">
+                  <label class="file-label">
+                    <input class="file-input" type="file"
+                           accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                           @change="upload_file($event, r._idx)">
+                    <span class="file-cta">
+                      <span class="file-label">
+                        <span><i class="fa fa-upload"></i></span>
+                      </span>
+                    </span>
+                  </label>
+                </div>
+              </p>
+            </div>
+  
+          </div>
+        
+        </div>
+
+        <div class="content">
+
+          <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
+        </div>
+        
+        <div class="content is-medium">
+            <p>
+              {{r.content}}
+            </p>
+          </div>
+          <div class="content is-small">
+            <p>
+              {{r.name}}
+            </p>
+          </div>
+          <div class="content is-small">
+            <p>
+              {{r.location}}
+            </p>
+          </div>
+
+          <div style="float:right;">
+            <div v-if="r.email === '[[=email]]'">
+
+              
+              <button @click="delete_post(r._idx)" class="button is-danger">
+                <i class="fa fa-trash"></i>
+              </button>
+              
+            </div>
+          </div>
+        </span>
+          <div stlye="padding-bottom: 5px">
+            <!-- if email you can like -->
+            [[if email:]]
+
+              <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
+
+                  <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 1)">
+                      <i class="fa fa-flip-horizontal" :class="{
+                          'fa-heart-o': !(r.like_type === 1),
+                          'fa-heart': (r.like_type === 1),
+                          }">
+                      </i>
+                  </span>
+
+              </span>
+            <!-- Cannot like -->
+            [[else:]]
+
+              <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
+  
+                    <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)">
+                      <i class="fa fa-heart-o"></i>
+                    </span>
+  
+              </span>
+            
+            [[pass]]
+            <!-- toggle comments -->
+              <span @click="toggle_comments(r._idx)" class="icon has-text-danger">
+                <i class="fa " :class="{
+                  'fa-comment-o': !(r.comments_a_viewable),
+                  'fa-comment': (r.comments_a_viewable),
+                  }">
+                </i>
+              </span>
+
+          </div>
+
+          <span v-if="r.hover && r.number_of_likes > 0">
+              <br>
+              <span style="color:crimson" v-if="r.number_of_likes > 0">
+                  Liked by<span v-if="r.like_type === 1"> [[=name]]<span v-if="r.number_of_likes != 1">,</span></span> 
+                  <span v-for="(l, index) in r.likes">
+                    <span v-if="index === r.likes.length - 1 "> 
+                      {{l}}
+                    </span>
+                    <span v-else> 
+                      {{l}}<span>, </span>
+                    </span>
+                  </span>
+              </span>
+              <br>
+          </span>
+          
+          <span v-if="r.comments_a_viewable">
+
+              <br>
+
+              <div style="padding-bottom: 10px;">
+
+                <div>Sidharth Naik: Wow great post </div> 
+
+                <div>S N: Love this post</div>
+
+              </div>  
+
+              <div>
+
+                <div style="float: left; width: 94%;">
+                  <input class="input" type="text" placeholder="Type here to enter comment">
+                </div>
+                <input type="submit" @click=" " value="Post" class="button is-primary">
+
+              </div>
+
+              <br>
+
+          </span>
+
+        <div style="height: 15px"></div>
+
+      </div>
+    </table>
+  </div>
+</div>
+  
+</div>
+</div>
+  <div class="box" style=background-color:rgb(164,215,236);> 
+
+    <div class="container block" style=background-color:rgb(164,215,236);>
+      <nav class="level">
+        <div class="level-left">
+          <figure class="image is-96x96 ">
+            <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
+         </figure>
+        <div class="section">
+          <h1 class="title is-size-3" style=color:white;>Bizzit</h1>
+        </div>
+       </div>
+       <div class="level-right ">
+        <p class="text is-size-6" style=color:white;>
+          A place for small businesses to grow.
+       </p>
+       </div>
+      </nav>
+    </div>
+  
+  </div>
+
+
+[[block page_scripts]]
+<!-- Loads the index-specific js for Vue -->
+<script>
+  let add_post_url = "[[=XML(add_post_url)]]";
+  let delete_post_url = "[[=XML(delete_post_url)]]";
+  let load_posts_url = "[[=XML(load_posts_url)]]";
+  let user_name = "[[=name]]";
+  let set_likes_url = "[[=XML(set_likes_url)]]";
+  let get_likes_url = "[[=XML(get_likes_url)]]";
+  let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
+  let search_url = "[[=XML(search_url)]]";
+  let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
+</script>
+<script src="js/index.js"></script>
+[[end]]
+
