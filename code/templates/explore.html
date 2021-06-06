@@ -32,30 +32,53 @@
   </a>
 </div>
 
-
 [[block page_scripts]]
-<!-- Loads the index-specific js for Vue -->
-<!--
-<script src="js/explore.js"></script>
--->
-<script>
-  function initMap(){
-    //map options
-    var options = {
-      zoom:8,
-      center:{lat:36.9741,lng:-122.0308}
-    }
-    //new map
-    var map = new
-    google.maps.Map(document.getElementById('map'), options);
 
-    //add marker
-    var marker = new google.maps.Marker({
-      position:{lat:36.9741,lng:-122.0308},
-      map:map
-    });
-  }
+<script type="text/javascript">
+    //var rows = "[[=rows[0].get('location') ]]"
+    // var rows = "[[=rows]]"
+    // var length = "[[=len(rows)]]"
+  
+    var loc = "[[=locations ]]"
+    var locations_arr = loc.split("!");
+
+    var geocoder;
+    var map;
+    //var address = locations_arr[0];
+    var address;
+    /*for(var i = 0; i < locations_arr.length; i++){
+      var address = locations_arr[i];
+    }*/
+      
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 8,
+          center: {lat: -34.397, lng: 150.644}
+        });
+
+        geocoder = new google.maps.Geocoder();
+         for(var i = 0; i < locations_arr.length; i++){
+          address = locations_arr[i];
+    
+        codeAddress(geocoder, map);
+         }
+      }
+
+      function codeAddress(geocoder, map) {
+        geocoder.geocode({'address': address}, function(results, status) {
+          if (status === 'OK') {
+            map.setCenter(results[0].geometry.location);
+            var marker = new google.maps.Marker({
+              map: map,
+              position: results[0].geometry.location
+            });
+          } else {
+            //alert('Geocode was not successful for the following reason: ' + status);
+          }
+        });
+      }
 </script>
+
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCfaQVuR2MyDiXTVRObaMRNkpi4gVLRR68&callback=initMap&libraries=&v=weekly" async></script>
 [[end]]
 

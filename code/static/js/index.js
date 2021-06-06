@@ -59,27 +59,6 @@ let init = (app) => {
         app.vue.uploaded = true;
     };
 
-    app.start_edit = function (row_idx, fn) {
-        let row = app.vue.rows[row_idx];
-        app.vue.rows[row_idx]._state[fn] = "edit";
-    };
-
-    app.stop_edit = function (row_idx, fn) {
-        let row = app.vue.rows[row_idx];
-        if (row._state[fn] === "edit") {
-            row._state[fn] = "pending";
-            axios.post(edit_post_url,
-                {
-                    id: row.id,
-                    field: fn,
-                    value: row[fn], // row.first_name
-                }).then(function (result) {
-                row._state[fn] = "clean";
-            });
-        }
-        // If I was not editing, there is nothing that needs saving.
-    }
-
     app.upload_file = function (event, row_idx) {
         let input = event.target;
         let file = input.files[0];
@@ -157,6 +136,7 @@ let init = (app) => {
                         likes: [],
                         string_of_dislikes: "",
                         category: app.vue.post_category,
+                        _state: {title: "clean", content: "clean", location: "clean"},
                     });
                     app.enumerate(app.vue.rows);
                     app.reset_form();

@@ -32,6 +32,10 @@ from py4web.utils.url_signer import URLSigner
 from .models import get_user_email, get_name
 import uuid 
 import random 
+from py4web.utils.form import Form, FormStyleBulma
+from .common import Field
+import time
+from pydal.validators import *
 
 url_signer = URLSigner(session)
 
@@ -44,6 +48,7 @@ def index():
         # This is the signed URL for the callback.
         email=get_user_email(),
         name=get_name(),
+        url_signer=url_signer,
         show_delete = show_delete,
         set_likes_url = URL('set_likes', signer=url_signer),
         get_likes_url = URL('get_likes', signer=url_signer),
@@ -64,10 +69,37 @@ def load_posts():
     return dict(
         rows= rows,
         )
-
-@action('add_post', method='POST')
+@action('add_post', method=["POST"])
 @action.uses(auth, url_signer.verify(), db)
 def add_post():
+    name = get_name()
+    email = get_user_email()
+    if(request.json.get('title') != "" and request.json.get('content') != "" and request.json.get('location') != "" and request.json.get('category') != ""):
+        id = db.posts.insert(
+            title=request.json.get('title'),
+            content=request.json.get('content'),
+            location=request.json.get('location'),
+            category=request.json.get('category'),
+            name=name,
+            email = email,
+        )
+        return dict(
+            id=id,
+            name=name,
+            email=email,
+        )
+    else:
+        print("You must fill all the fields to post!")
+        id = request.params.get('id')
+        assert id is not None
+        db(db.posts.id == id).delete()
+        return "failed to post"
+
+@action('add_post_new', method=["POST"])
+@action.uses(db, session, auth.user, 'add_post.html')
+def add_post_new():
+    form = Form(db.posts, csrf_session=session, formstyle=FormStyleBulma)
+
     name = get_name()
     email = get_user_email()
     id = db.posts.insert(
@@ -78,11 +110,21 @@ def add_post():
         name=name,
         email = email,
     )
+    redirect(URL('index'))
     return dict(
         id=id,
         name=name,
         email=email,
+        form=form
     )
+    # #Insert form: no records in it
+    # form = Form(db.posts, csrf_session=session, formstyle=FormStyleBulma)
+    # if form.accepted:
+    #     #redirect, the insertion already happened
+    #     redirect(URL('index')) #go back to index after insertion
+
+    # #Either this is a GET request, or this is a POST but not accepted = with errors
+    # return dict(form=form)
 
 @action('delete_post')
 @action.uses(auth, url_signer.verify(), db)
@@ -154,13 +196,22 @@ def get_likes_stream():
 
 # This controller is used to go to the explore map page
 @action('explore')
-@action.uses(auth.user, url_signer, 'explore.html')
+@action.uses(db, auth.user, url_signer, 'explore.html')
 def explore():
-  
+    #rows = db(db.posts).select(db.posts.location).as_list()
+    rows = db(db.posts).select(db.posts.location).as_list()
+
+    locations = ""
+    for row in rows:
+        for k in row:
+            locations += row.get(k) + "!"
+    
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
         name=get_name(),
+        locations=locations,
+        rows=rows,
     )
 
 # This controller is used to initialize the database.
@@ -220,3 +271,20 @@ def upload_thumbnail():
     db(db.posts.id == post_id).update(thumbnail=thumbnail)
     redirect(URL('index'))
     return "ok"
+
+@action('edit_post/<id:int>', method=["GET", "POST"])
+@action.uses(db, session, auth.user, url_signer.verify(), 'edit_post.html')
+def edit(id=None):
+    assert id is not None
+    #We read the product being edited from the db
+    b = db.posts[id]
+
+    if b is None or get_user_email() != b.user_email:
+        redirect(URL('index'))
+    #Edit form: it has records
+    form = Form(db.posts, record=b, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
+    if form.accepted:
+        #The update already happened
+        redirect(URL('index'))
+    return dict(form=form)
+
