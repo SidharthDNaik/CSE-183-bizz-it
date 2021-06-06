@@ -6,16 +6,26 @@
 }
 </style>
 
-<div class="section" style="background-color:rgb(168, 204, 235);" id="vue-target" v-cloak>
+<div class="section" style="background-color:rgb(179, 213, 242);" id="vue-target" v-cloak>
   <div class="container is-max-desktop">
-
-
+    <div class="container has-text-centered">
+      [[if email:]]
+      <h1 class="title is-size-8">
+        My Feed
+      </h1> 
+      [[else:]]
+      <h1 class="title is-size-8">
+        Log in to post and like
+      </h1>
+      [[pass]]
+    </div>
   <div class="container block">
     <div class="container block"></div>
     
     <div class="columns block">
 
     [[if email:]]
+    
     <div v-if="!post_mode">
       <div class="column">
         <button @click="set_post_status(true)" class="button is-warning " >
@@ -43,7 +53,7 @@
 
   <div v-if="post_mode" class="container block">
 
-    <div class="box" style=background-color:rgb(255,254,211);>
+    <div class="box" style="background-color: rgb(252, 243, 206);">
       <div class="form">
         <!-- This looks like a form, but is not.  We just need the inputs. -->
         <div class="field">
@@ -103,8 +113,17 @@
       <div v-for="p in posts_list" class="box">{{p}}
       <div v-for="r in rows.slice().reverse()" class="box">
       -->
-      <div v-for="r in rows.slice().reverse()" class="box" style="background-color:rgb(235, 242, 247);">
-
+      <div v-for="r in rows.slice().reverse()" class="box pl-5" style="background-color:rgb(235, 242, 247);">
+        <div class="content is-medium">
+          <p>
+            {{r.name}}
+          </p>
+        </div>
+        <div class="content is-small">
+          <p>
+            {{r.location}}
+          </p>
+        </div>
         <div class="title">
           <p>
             {{r.title}}
@@ -133,25 +152,17 @@
           </div>
         
         </div>
+        <div class="container has-text-centered">
 
         <div class="content">
 
           <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
         </div>
+        </div>
         
         <div class="content is-medium">
             <p>
               {{r.content}}
-            </p>
-          </div>
-          <div class="content is-small">
-            <p>
-              {{r.name}}
-            </p>
-          </div>
-          <div class="content is-small">
-            <p>
-              {{r.location}}
             </p>
           </div>
 
@@ -253,7 +264,7 @@
 </div>
 </div>
 </div>
-  <div class="box" style="background-color:rgb(168, 204, 235);"> 
+  <div class="box" style="background-color:rgb(179, 213, 242);"> 
 
     <div class="container block">
       <nav class="level">

@@ -16,6 +16,7 @@ let init = (app) => {
         add_title: "",
         add_location: "",
         email: "",
+        smallBiz: "",
         is_matching: false,
         post_search:"",
         posts_list: [], //not used right now, using rows instead 
@@ -130,6 +131,7 @@ let init = (app) => {
                         thumbnail: app.vue.add_thumbnail,
                         name: response.data.name,
                         email: response.data.email,
+                        smallBiz: response.data.smallBiz,
                         number_of_likes: 0,
                         number_of_dislikes: 0,
                         likes: [],

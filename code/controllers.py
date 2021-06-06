@@ -42,7 +42,8 @@ url_signer = URLSigner(session)
 def index():
     show_delete = db.auth_user.email == get_user_email()
     # print(db.auth_user.small_business)
-    # print(auth.extra_fields)
+    print(auth.current_user.get('small_business'))
+
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
@@ -76,7 +77,7 @@ def add_post():
     # form = Form(db, extra_fields=True, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
     # smallBiz = auth.small_business
     # show_delete = db.auth_user.email == get_user_email()
-    # smallBiz = db.auth_user.small_business
+    smallBiz = auth.current_user.get('small_business')
     # auth = Auth(session, db, define_tables=False, extra_fields=[Field('small_business', 'boolean')])
 
     # print(auth.extra_auth_user_fields)
@@ -92,7 +93,7 @@ def add_post():
         email = email,
     )
     return dict(
-        # smallBiz=smallBiz,
+        smallBiz=smallBiz,
         id=id,
         name=name,
         email=email,
