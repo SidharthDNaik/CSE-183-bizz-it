@@ -15,6 +15,7 @@ let init = (app) => {
         add_content: "",
         add_title: "",
         add_location: "",
+        add_business_name: "",
         email: "",
         is_matching: false,
         post_search:"",
@@ -121,7 +122,9 @@ let init = (app) => {
                 content: app.vue.add_content,
                 location: app.vue.add_location,
                 thumbnail: app.vue.add_thumbnail,
+                business_name: app.vue.add_business_name,
                 category: app.vue.post_category,
+                
             }).then(
                 function (response){
                     app.vue.rows.push({
@@ -129,6 +132,7 @@ let init = (app) => {
                         title: app.vue.add_title,
                         content: app.vue.add_content,
                         location: app.vue.add_location,
+                        business_name: app.vue.add_business_name,
                         thumbnail: app.vue.add_thumbnail,
                         name: response.data.name,
                         email: response.data.email,
@@ -152,6 +156,7 @@ let init = (app) => {
         app.vue.add_title = "";
         app.vue.add_content = "";
         app.vue.add_location = "";
+        app.vue.add_business_name = "";
         app.vue.name = "";
         app.vue.post_category = "";
     };

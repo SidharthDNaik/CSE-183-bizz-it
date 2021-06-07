@@ -6,11 +6,11 @@
 }
 </style>
 
-<div class="section"style=background-color:rgb(164,215,236); id="vue-target" v-cloak>
+<div class="section" style=background-color:rgb(164,215,236); id="vue-target" v-cloak>
   <div class="container is-max-desktop">
 
-  <div class="container">
-    <div class="box" style=background-color:rgb(255,254,211);>
+  <div class="container has-text-centered">
+    <!-- <div class="box" style=background-color:rgb(255,254,211);> -->
        <!-- Main container -->
        <nav class="level">
           <!-- Left side -->
@@ -22,58 +22,30 @@
             <h2 class="title is-size-1">[[=name]]'s Profile</h2>
           </div>
           </div>
-
-          <div class="level-middle">
-            <div class="columns block">
-              <div class="column">
-                <p class="control has-icons-right">
-                  <input class="input" type="text" v-model="post_search" placeholder="Search my posts" @keyup="search"/>
-                  <span class="icon is-small is-right">
-                    <i class="fa fa-search"></i>
-                  </span>
-                </p>
-              </div>
-              <div class="column is-narrow">
-                <button class="button" @click="clear_search">
-                  <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
-                </button>
-              </div>
-            </div>
-
-          </div>
-          
        </nav>
-    </div>
+    <!-- </div> -->
  </div>
 
   <div class="container block">
-
-    <div class="container block">
-        <!-- Return user name -->
-      [[if email:]]
-      <!-- the user is logged in -->
-      <div class="container block">
-        <div class="box is-narrow" style=background-color:rgb(252,180,174);> 
-          My Posts
-        </div>
-        
-
-      </div>
-        
-      [[else:]]
-      <!-- the user is not logged in -->
-      <div class="container block">
-        <div class="box is-narrow" style=background-color:rgb(252,180,174);> 
-        Log in to post and like.
-      </div>
-    </div>
-      [[pass]]
-    </div>
     [[if email:]]
     
     [[pass]]
+    <div class="columns block">
+      <div class="column">
+        <p class="control has-icons-right">
+          <input class="input" type="text" v-model="post_search" placeholder="Search my posts" @keyup="search"/>
+          <span class="icon is-small is-right">
+            <i class="fa fa-search"></i>
+          </span>
+        </p>
+      </div>
+      <div class="column is-narrow">
+        <button class="button is-warning" @click="clear_search">
+          <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
+        </button>
+      </div>
+    </div>
   </div>
-
   <div class="container block">
     <table class="table is-striped is-fullwidth">
       <!--
@@ -82,9 +54,17 @@
       <div v-for="p in posts_list" class="box">{{p}}
       <div v-for="r in rows.slice().reverse()" class="box">
       -->
-      <div v-for="r in rows.slice().reverse()" class="box"v-if="r.email === '[[=email]]'">
-    
-
+      <div v-for="r in rows.slice().reverse()" v-if="r.email === '[[=email]]'" class="box" style="background-color:rgb(235, 242, 247);">
+        <div class="content is-medium">
+          <p>
+            {{r.name}}
+          </p>
+        </div>
+        <div class="content is-small">
+          <p>
+            {{r.location}}
+          </p>
+        </div>
         <div class="title">
           <p>
             {{r.title}}
@@ -114,9 +94,10 @@
         
         </div>
 
-        <div class="content">
-
-          <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
+        <div class="container has-text-centered">
+          <div class="content">
+            <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
+          </div>
         </div>
         
         <div class="content is-medium">
@@ -124,14 +105,10 @@
               {{r.content}}
             </p>
           </div>
+          
           <div class="content is-small">
             <p>
-              {{r.name}}
-            </p>
-          </div>
-          <div class="content is-small">
-            <p>
-              {{r.location}}
+              {{r.category}}
             </p>
           </div>
 
@@ -230,13 +207,14 @@
       </div>
     </table>
   </div>
+  
 </div>
   
 </div>
 </div>
   <div class="box" style=background-color:rgb(164,215,236);> 
 
-    <div class="container block" style=background-color:rgb(164,215,236);>
+    <div class="container block">
       <nav class="level">
         <div class="level-left">
           <figure class="image is-96x96 ">

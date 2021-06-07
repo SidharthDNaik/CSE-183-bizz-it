@@ -56,8 +56,6 @@ def index():
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
         upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
-        
-       
     )
 
 # This is our very first API function.
@@ -66,38 +64,36 @@ def index():
 def load_posts():
     rows = db(db.posts).select().as_list()
     return dict(
-        rows= rows,
-        )
+        rows= rows,)
 
 @action('add_post', method='POST')
 @action.uses(auth, url_signer.verify(), db)
 def add_post():
-    # form = Form(db.auth)
-    # form = Form(db, extra_fields=True, deletable=False, csrf_session=session, formstyle=FormStyleBulma)
-    # smallBiz = auth.small_business
-    # show_delete = db.auth_user.email == get_user_email()
-    # smallBiz = db.auth_user.small_business
-    # auth = Auth(session, db, define_tables=False, extra_fields=[Field('small_business', 'boolean')])
-
-    # print(auth.extra_auth_user_fields)
-    # print(db.auth_user.small_business)
-
     name = get_name()
     email = get_user_email()
-    id = db.posts.insert(
-        title=request.json.get('title'),
-        content=request.json.get('content'),
-        location=request.json.get('location'),
-        category=request.json.get('category'),
-        name=name,
-        email = email,
-    )
-    return dict(
-        # smallBiz=smallBiz,
-        id=id,
-        name=name,
-        email=email,
-    )
+    if(request.json.get('title') != "" and request.json.get('content') != "" 
+    and request.json.get('location') != "" and request.json.get('business_name') != "" 
+    and request.json.get('category') != ""):
+        id = db.posts.insert(
+            title=request.json.get('title'),
+            content=request.json.get('content'),
+            location=request.json.get('location'),
+            category=request.json.get('category'),
+            business_name=request.json.get('business_name'),
+            name=name,
+            email = email,
+        )
+        return dict(
+            id=id,
+            name=name,
+            email=email,
+        )
+    else:
+        print("You must fill all the fields to post!")
+        id = request.params.get('id')
+        assert id is not None
+        db(db.posts.id == id).delete()
+        return "failed to post"
 
 @action('delete_post')
 @action.uses(auth, url_signer.verify(), db)
@@ -172,17 +168,29 @@ def get_likes_stream():
 @action.uses(db, auth.user, url_signer, 'explore.html')
 def explore():
     rows = db(db.posts).select(db.posts.location).as_list()
+    businessnames = db(db.posts).select(db.posts.business_name).as_list()
+    print(businessnames)
 
     locations = ""
     googlemaps = []
+    bizznames = []
     for row in rows:
         for k in row:
             locations += row.get(k) + "!"
             googlemaps.append(row.get(k))
+
+    for r in businessnames:
+        for i in r:
+            print(r.get(i))
+            bizznames.append(r.get(i))
+
+    print(bizznames)
     
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
+        businessnames=businessnames,
+        bizznames=bizznames,
         googlemaps=googlemaps,
         name=get_name(),
         locations=locations,
@@ -230,7 +238,9 @@ def search():
     if t:
         tt = t.strip()
         
-        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)) | (db.posts.category.contains(tt)))
+        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | 
+        (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)) | 
+        (db.posts.business_name.contains(tt)) | (db.posts.category.contains(tt)))
         
     else: 
         q = db.posts.id > 0
