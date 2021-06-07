@@ -28,7 +28,6 @@ let init = (app) => {
         img_url: "",
         add_mode: false,
         post_category: "",
-        sort_category: "",
     };
 
     // This is the file selected for upload.
@@ -193,7 +192,6 @@ let init = (app) => {
     };
 
     app.sort_by_category = function (sort_category_input) {
-        //app.vue.sort_category = sort_category_input;
         let search_cat = sort_category_input
         axios.get(search_url, {params: {q: search_cat}})
         .then(function (result){
@@ -240,18 +238,13 @@ let init = (app) => {
         Vue.set(row, 'comments_a_viewable', !row.comments_a_viewable);
     };
 
-    app.search = function (input) {
+    app.search = function () {
        axios.get(search_url, {params: {q: app.vue.post_search}})
             .then(function (result){
                 app.vue.rows = app.enumerate(result.data.rows);
             });
         app.vue.search_mode = true;
         
-        /*let search_cat = input;
-        axios.get(search_url, {params: {search_cat: search_cat}})
-            .then(function (result){
-                app.vue.rows = app.enumerate(result.data.rows);
-        });*/
 
     };
 
