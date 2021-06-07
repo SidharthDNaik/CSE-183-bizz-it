@@ -169,11 +169,11 @@ def get_likes_stream():
 def explore():
     rows = db(db.posts).select(db.posts.location).as_list()
     businessnames = db(db.posts).select(db.posts.business_name).as_list()
-    print(businessnames)
 
     locations = ""
     googlemaps = []
     bizznames = []
+    final_dict = {}
     for row in rows:
         for k in row:
             locations += row.get(k) + "!"
@@ -181,15 +181,21 @@ def explore():
 
     for r in businessnames:
         for i in r:
-            print(r.get(i))
+            # print(r.get(i))
             bizznames.append(r.get(i))
+    
+    for name, maps in zip(bizznames, googlemaps):
+        # print(name, maps)
+        final_dict[name] = maps
 
-    print(bizznames)
+    print(final_dict)
+
     
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
         businessnames=businessnames,
+        final_dict=final_dict,
         bizznames=bizznames,
         googlemaps=googlemaps,
         name=get_name(),
