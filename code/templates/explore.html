@@ -11,39 +11,36 @@
   }
   </style>
 
-<div class="section" style="background-color:rgb(168, 204, 235);">
-  <h2 class="title is-3">Map</h2>
-
-  <a class="button is-success" href="[[=URL('index')]]">
-    <span><i class="fa fa-backward"> </i> Back</span>
-  </a>
-
-  
-  <div class="container">
+<div class="section" style=background-color:rgb(164,215,236);>
+  <div class="container has-text-centered">
+    <h2 class="title is-3">Map</h2>
+  </div>
+  <div class="section">
     <div id="map"></div>
   </div>
 
   <div class ="section">
 
-    <div class="box" style="background-color:rgb(235, 242, 247);">
+    <!-- <div class="box" style="background-color:rgb(235, 242, 247);"> -->
   
       <div class="title"> Small Business Addresses: </div>
   
       [[for row in googlemaps:]]
+        
   
-      <div class="box">
-  
-        <div class ="section">
-          <a href="[[='https://www.google.com/maps/place/'+row]]">Open Google Maps to: [[= row]]</a>
-        </div>
-            
-      </div>
+            <div class="box">
+        
+              <div class ="section">
+                <a href="[[='https://www.google.com/maps/place/'+row]]">Open Google Maps to: [[=row]]</a>
+              </div>
+                  
+            </div>
       
         
-        
-      [[pass]]
+      
+    [[pass]]
     
-    </div>
+    <!-- </div> -->
   
   
   </div>

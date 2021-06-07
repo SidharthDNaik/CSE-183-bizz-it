@@ -6,9 +6,19 @@
 }
 </style>
 
-<div class="section" style="background-color:rgb(168, 204, 235);" id="vue-target" v-cloak>
+<div class="section" style=background-color:rgb(164,215,236); id="vue-target" v-cloak>
   <div class="container is-max-desktop">
-
+    <div class="container has-text-centered">
+      [[if email:]]
+      <h1 class="title is-size-8">
+        My Feed
+      </h1> 
+      [[else:]]
+      <h1 class="title is-size-8">
+        Log in to post and like
+      </h1>
+      [[pass]]
+    </div>
 
   <div class="container block">
     <div class="container block"></div>
@@ -43,7 +53,7 @@
 
   <div v-if="post_mode" class="container block">
 
-    <div class="box" style=background-color:rgb(255,254,211);>
+    <div class="box" style="background-color: rgb(252, 243, 206);">
       <div class="form">
         <!-- This looks like a form, but is not.  We just need the inputs. -->
         <div class="field">
@@ -51,6 +61,15 @@
           <p class="subtitle is-size-4 has-text-black">
             New Post:
          </p>
+
+         <div class="container block">
+          <div class="control">
+            <p class="subtitle is-size-5">
+              Small Business Name:
+           </p>
+            <input class="input is-warning" type="text" v-model="add_business_name" placeholder="Enter your small business' name here">
+          </div>
+        </div>
   
           <div class="container block">
             <div class="control">
@@ -107,8 +126,8 @@
         
         <div class="field">
           <div class="control">
-            <input type="submit" @click="add_post" value="Post" class="button is-primary">
-            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning">
+            <input type="submit" @click="add_post" value="Post" class="button is-primary is-light">
+            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning is-light">
           </div>
         </div>
   
@@ -120,14 +139,17 @@
 
   <div class="container block">
     <table class="table is-striped is-fullwidth">
-      <!--
-      <span v-if="search_mode===true">
-        
-      <div v-for="p in posts_list" class="box">{{p}}
-      <div v-for="r in rows.slice().reverse()" class="box">
-      -->
       <div v-for="r in rows.slice().reverse()" class="box" style="background-color:rgb(235, 242, 247);">
-
+        <div class="content is-medium">
+          <p>
+            {{r.business_name}}
+          </p>
+        </div>
+        <div class="content is-small">
+          <p>
+            {{r.location}}
+          </p>
+        </div>
         <div class="title">
           <p>
             {{r.title}}
@@ -157,9 +179,10 @@
         
         </div>
 
-        <div class="content">
-
-          <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
+        <div class="container has-text-centered">
+          <div class="content">
+            <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
+          </div>
         </div>
         
         <div class="content is-medium">
@@ -167,19 +190,16 @@
               {{r.content}}
             </p>
           </div>
-          <div class="content is-small">
-            <p>
-              {{r.location}}
-            </p>
-          </div>
-          <div class="content is-small">
-            <p>
-              {{r.category}}
-            </p>
-          </div>
+
           <div class="content is-small">
             <p>
               {{r.name}}
+            </p>
+          </div>
+          
+          <div class="content is-small">
+            <p>
+              {{r.category}}
             </p>
           </div>
 
@@ -281,7 +301,7 @@
 </div>
 </div>
 </div>
-  <div class="box" style="background-color:rgb(168, 204, 235);"> 
+  <div class="section" style=background-color:rgb(164,215,236);> 
 
     <div class="container block">
       <nav class="level">
