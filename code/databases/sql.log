@@ -571,3 +571,38 @@ success!
 success!
 success!
 success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+success!
+timestamp: 2021-06-06T19:37:52.782811
+CREATE TABLE "comments"(
+    "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "post_id" INTEGER REFERENCES "posts" ("id") ON DELETE CASCADE  ,
+    "comment_content" CHAR(512),
+    "commenter" CHAR(512),
+    "email" CHAR(512)
+);
+success!
+success!
+success!
+success!
+success!
+success!
+success!

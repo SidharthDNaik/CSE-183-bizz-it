@@ -21,11 +21,11 @@
 
   <div class ="section">
 
-    <!-- <div class="box" style="background-color:rgb(235, 242, 247);"> -->
+    <div class="box" style="background-color:rgb(235, 242, 247);">
   
       <div class="title"> Small Business Addresses: </div>
   
-      [[for row in googlemaps:]]
+      <!-- [[for row in googlemaps:]]
         
   
             <div class="box">
@@ -38,9 +38,24 @@
       
         
       
+    [[pass]] -->
+
+    [[for row in final_dict:]]
+        
+            <!-- [[=final_dict.get(row)]] -->
+            <div class="box">
+        
+              <div class ="section">
+                <a href="[[='https://www.google.com/maps/place/'+final_dict.get(row)]]">[[=row]]: [[=final_dict.get(row)]] </a>
+              </div>
+                  
+            </div>
+      
+        
+      
     [[pass]]
     
-    <!-- </div> -->
+    </div>
   
   
   </div>
@@ -53,11 +68,16 @@
 
 <script type="text/javascript">  
     var loc = "[[=locations ]]"
+    var bus = "[[=business_names ]]"
+
     var locations_arr = loc.split("!");
+    var businesses_arr = bus.split("!");
 
     var geocoder;
     var map;
-    var address;  
+    var address;
+    //var message;
+
     function initMap() {
       var map = new google.maps.Map(document.getElementById('map'), {
         zoom: 8,
@@ -67,23 +87,38 @@
       geocoder = new google.maps.Geocoder();
       for(var i = 0; i < locations_arr.length; i++){
         address = locations_arr[i];
-        codeAddress(geocoder, map);
+        //message = businesses_arr[i] + "\n" + address;
+        message = '<h3>' + businesses_arr[i] + '</h3>' + '<h3>' + address + '</h3>';
+        codeAddress(geocoder, map, message);
         }
       }
+      
 
-    function codeAddress(geocoder, map) {
+    function codeAddress(geocoder, map, message) {
       geocoder.geocode({'address': address}, function(results, status) {
-        if (status === 'OK') {
           map.setCenter(results[0].geometry.location);
           var marker = new google.maps.Marker({
               map: map,
-              position: results[0].geometry.location
+              position: results[0].geometry.location,
+              icon: {url:"https://i.ibb.co/7px3cS6/Bizzit-Logo.png", scaledSize: new google.maps.Size(50, 50)}
             });
-        } else {
-            //alert('Geocode was not successful for the following reason: ' + status);
-        }
+          var infowindow = new google.maps.InfoWindow({
+            content: message
+          });
+          marker.addListener('click', function(){
+            infowindow.open(map, marker);
+          });
+
+        /*marker.addListener('click', function() {
+        infowindow.open(map, marker);
+      });*/
+        
+
       });
+
+      
     }
+    
     
 </script>
 
