@@ -56,6 +56,9 @@ def index():
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
         upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
+        add_comment_url = URL('add_comment', signer=url_signer),
+        get_comments_stream_url = URL('get_comments_stream', signer=url_signer),
+        delete_comment_url = URL('delete_comment', signer=url_signer),
     )
 
 # This is our very first API function.
@@ -102,6 +105,42 @@ def delete_post():
     assert id is not None
     db(db.posts.id == id).delete()
     return "ok"
+
+@action('delete_comment')
+@action.uses(auth, url_signer.verify(), db)
+def delete_comment():
+    post_id = request.params.get('post_id')
+    c_idx = request.params.get('c_idx')
+    assert post_id is not None
+    assert c_idx is not None
+    db(
+        (db.comments.post_id == post_id) &
+        (db.comments.id == c_idx)
+      ).delete()
+    return "ok"
+
+@action('add_comment', method='POST')
+@action.uses(auth, url_signer.verify(), db)
+def add_comment():
+    post_id = request.json.get('post_id')
+    commenter = request.json.get('commenter')
+    t_comment = request.json.get('comment')
+    assert post_id is not None and t_comment is not None
+    comment_content = commenter + ": " + t_comment
+    email = get_user_email()
+    db.comments.insert(
+        post_id = post_id,
+        commenter = commenter,
+        comment_content = comment_content,
+        email = email,
+    )
+    rows = db(
+                (db.comments.post_id == post_id)
+    ).select().as_list()
+    return dict(
+        rows=rows,
+        email = email,
+    )
 
 @action('get_likes')
 @action.uses(url_signer.verify(), db)
@@ -161,6 +200,25 @@ def get_likes_stream():
         number_of_dislikes=number_of_dislikes,
         likes=likes,
         string_of_dislikes=string_of_dislikes,
+    )
+
+@action('get_comments_stream')
+@action.uses(url_signer.verify(), db)
+def get_comments_stream():
+    post_id = request.params.get('post_id')
+    commenter = request.params.get('commenter')
+    rows = db(
+                (db.comments.post_id == post_id) &
+                (db.comments.commenter != commenter)
+            ).select().as_list()
+    number_of_comments = 0
+    comments = []
+    i = 0
+    for r in rows:
+        comments.append(r)
+    return dict(
+        number_of_comments = number_of_comments,
+        comments = [ele for ele in reversed(comments)],
     )
 
 # This controller is used to go to the explore map page

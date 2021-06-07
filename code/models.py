@@ -72,5 +72,12 @@ db.define_table('likes',
                 Field('likee'),
 )
 
+db.define_table('comments',
+                 Field('post_id', 'reference posts'),
+                 Field('comment_content', 'string'),
+                 Field('commenter'),
+                 Field('email', 'string', default=get_user_email,),
+)
+
 db.commit()
 

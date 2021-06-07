@@ -270,28 +270,54 @@
           
           <span v-if="r.comments_a_viewable">
 
-              <br>
+            <br>
 
-              <div style="padding-bottom: 10px;">
+            <div style="overflow-y: scroll; padding-top: 10px; padding-bottom: 10px; max-height: 400px; display: flex; flex-direction: column-reverse;">
 
-                <div>Sidharth Naik: Wow great post </div> 
+              <span v-for="(c, index) in r.comments">
 
-                <div>S N: Love this post</div>
+                  <span v-if="index == r.comments.length - 1">
+                    <div style="padding-bottom: 20px;">
+                      <div style="padding-top: 15px;">
+                        {{c['comment_content']}}
+                      </div>
+                    </div> 
+                  </span>
 
-              </div>  
+                  <span v-else>
+                    <div style="padding-bottom: 20px; border-top-style: solid; border-width: .5px; border-color: lightgray;">
+                      <div style="padding-top: 15px;">
+                        {{c['comment_content']}}
+                      </div>
+                    </div> 
+                  </span>
 
-              <div>
+                  [[if email:]]
 
-                <div style="float: left; width: 94%;">
-                  <input class="input" type="text" placeholder="Type here to enter comment">
+                  <div style="float:right;">
+                    <div v-if="c['email'] === '[[=email]]'">
+                      <button @click="delete_comment(r._idx, c['id'], index)" class="button is-danger">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+
+                  [[pass]]
+
+              </span>
+
+            </div>  
+
+            [[if email:]]
+              <div style="padding-top: 20px; display: flex;">
+                <div style="flex: 20; padding-right: 10px">
+                <input v-model="r.comment" class="input" type="text" placeholder="Type here to enter comment">
                 </div>
-                <input type="submit" @click=" " value="Post" class="button is-primary">
-
+                <div style="flex: 1;">
+                  <input type="submit" @click="add_comment(r._idx)" value="Post" class="button is-primary">
+                </div>
               </div>
-
-              <br>
-
-          </span>
+            [[pass]]
 
         <div style="height: 15px"></div>
 
@@ -336,6 +362,9 @@
   let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
   let search_url = "[[=XML(search_url)]]";
   let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
+  let get_comments_stream_url = "[[=XML(get_comments_stream_url)]]";
+  let delete_comment_url = "[[=XML(delete_comment_url)]]";
+  let add_comment_url = "[[=XML(add_comment_url)]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]
