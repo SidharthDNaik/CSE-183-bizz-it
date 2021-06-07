@@ -50,8 +50,10 @@ db.define_table('posts',
                         'string',
                     ),
                     Field(
-                        'category',
-                        'string',
+                        'category','string',
+                    ),
+                    Field(
+                        'business_name','string',
                     ),
                     Field(
                         'email',
@@ -68,6 +70,13 @@ db.define_table('likes',
                 Field('post_id', 'reference posts'),
                 Field('like_type', 'integer', default=0),
                 Field('likee'),
+)
+
+db.define_table('comments',
+                 Field('post_id', 'reference posts'),
+                 Field('comment_content', 'string'),
+                 Field('commenter'),
+                 Field('email', 'string', default=get_user_email,),
 )
 
 db.commit()

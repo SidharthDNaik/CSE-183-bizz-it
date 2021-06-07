@@ -6,9 +6,19 @@
 }
 </style>
 
-<div class="section" style="background-color:rgb(168, 204, 235);" id="vue-target" v-cloak>
+<div class="section" style=background-color:rgb(164,215,236); id="vue-target" v-cloak>
   <div class="container is-max-desktop">
-
+    <div class="container has-text-centered">
+      [[if email:]]
+      <h1 class="title is-size-8">
+        My Feed
+      </h1> 
+      [[else:]]
+      <h1 class="title is-size-8">
+        Log in to post and like
+      </h1>
+      [[pass]]
+    </div>
 
   <div class="container block">
     <div class="container block"></div>
@@ -18,7 +28,7 @@
     [[if email:]]
     <div v-if="!post_mode">
       <div class="column">
-        <button @click="set_post_status(true)" class="button is-warning " >
+        <button @click="set_post_status(true)" class="button is-warning" >
           <i class="fa fa-plus fa-fw"></i> 
         </button>
       </div>
@@ -43,7 +53,7 @@
 
   <div v-if="post_mode" class="container block">
 
-    <div class="box" style=background-color:rgb(255,254,211);>
+    <div class="box" style="background-color: rgb(252, 243, 206);">
       <div class="form">
         <!-- This looks like a form, but is not.  We just need the inputs. -->
         <div class="field">
@@ -51,6 +61,15 @@
           <p class="subtitle is-size-4 has-text-black">
             New Post:
          </p>
+
+         <div class="container block">
+          <div class="control">
+            <p class="subtitle is-size-5">
+              Small Business Name:
+           </p>
+            <input class="input is-warning" type="text" v-model="add_business_name" placeholder="Enter your small business' name here">
+          </div>
+        </div>
   
           <div class="container block">
             <div class="control">
@@ -78,6 +97,22 @@
               <input class="input is-primary" type="text" v-model="add_location" placeholder="Enter your small business' address here">
             </div>
           </div>
+
+          <div class="container block">
+            <p class="subtitle is-size-5">
+              Category:
+            </p>
+            <div class="is-grouped">
+                <button @click="get_category('Restaurants')" class="button is-link is-light is-outlined">Restaurants</button>
+                <button @click="get_category('Bakeries')" class="button is-link is-light is-outlined">Bakeries</button>
+                <button @click="get_category('Clothing')" class="button is-link is-light is-outlined">Clothing</button>
+                <button @click="get_category('Art')" class="button is-link is-light is-outlined">Art</button>
+                <button @click="get_category('Home')" class="button is-link is-light is-outlined">Home</button>
+                <button @click="get_category('Beauty')" class="button is-link is-light is-outlined">Beauty</button>
+                <button @click="get_category('Services')" class="button is-link is-light is-outlined">Services</button>
+                <button @click="get_category('Other')" class="button is-link is-light is-outlined">Other</button>
+            </div>
+          </div>
           
         </div>
 
@@ -87,12 +122,12 @@
           </span>
           <strong>*Note:</strong> You must fill all fields in order to post.
         </div>
-        
+  
         
         <div class="field">
           <div class="control">
-            <input type="submit" @click="add_post" value="Post" class="button is-primary">
-            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning">
+            <input type="submit" @click="add_post" value="Post" class="button is-primary is-light">
+            <input type="submit" @click="set_post_status(false)" value="Cancel" class="button is-warning is-light">
           </div>
         </div>
   
@@ -104,46 +139,27 @@
 
   <div class="container block">
     <table class="table is-striped is-fullwidth">
-      <!--
-      <span v-if="search_mode===true">
-        
-      <div v-for="p in posts_list" class="box">{{p}}
-      <div v-for="r in rows.slice().reverse()" class="box">
-      -->
       <div v-for="r in rows.slice().reverse()" class="box" style="background-color:rgb(235, 242, 247);">
-
+        <div class="content is-medium">
+          <p>
+            {{r.business_name}}
+          </p>
+        </div>
+        <div class="content is-small">
+          <p>
+            {{r.location}}
+          </p>
+        </div>
         <div class="title">
           <p>
             {{r.title}}
           </p>
         </div>
-        
-        <div style="float:right;">
-          <div v-if="r.email === '[[=email]]'">
-            <div v-if="!r.thumbnail">
-              <p class="control">
-                <div class="file is-info">
-                  <label class="file-label">
-                    <input class="file-input" type="file"
-                           accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                           @change="upload_file($event, r._idx)">
-                    <span class="file-cta">
-                      <span class="file-label">
-                        <span><i class="fa fa-upload"></i></span>
-                      </span>
-                    </span>
-                  </label>
-                </div>
-              </p>
-            </div>
-  
+
+        <div class="container has-text-centered">
+          <div class="content">
+            <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
           </div>
-        
-        </div>
-
-        <div class="content">
-
-          <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
         </div>
         
         <div class="content is-medium">
@@ -151,28 +167,54 @@
               {{r.content}}
             </p>
           </div>
+
           <div class="content is-small">
             <p>
-              {{r.category}}
               {{r.name}}
             </p>
           </div>
+          
           <div class="content is-small">
             <p>
-              {{r.location}}
+              {{r.category}}
             </p>
           </div>
+
+         
+          <br>
+            <div v-if="r.email === '[[=email]]'">
+              <div v-if="!r.thumbnail">
+                <p class="control">
+                  <div class="file is-info">
+                    <label class="file-label">
+                      <input class="file-input" type="file"
+                             accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                             @change="upload_file($event, r._idx)">
+                      <span class="file-cta">
+                        <span class="file-label">
+                          <span> 
+                            <i class="fa fa-upload" ></i>
+                          </span>
+                        </span>
+                      </span>
+                    </label>
+                  </div>
+                </p>
+              </div>
+    
+            </div>
+
+          </br>
+            
+          
           
 
           <div style="float:right;">
             <div v-if="r.email === '[[=email]]'">
-
-              
-              <button @click="delete_post(r._idx)" class="button is-danger">
+              <button @click="delete_post(r._idx)" class="button is-danger is-light">
                 <i class="fa fa-trash"></i>
               </button>
-
-              
+            
             </div>
           </div>
         </span>
@@ -204,7 +246,8 @@
             
             [[pass]]
             <!-- toggle comments -->
-              <span @click="toggle_comments(r._idx)" class="icon has-text-danger">
+            
+              <span @click="toggle_comments(r._idx)" class="icon has-text-danger is-light">
                 <i class="fa " :class="{
                   'fa-comment-o': !(r.comments_a_viewable),
                   'fa-comment': (r.comments_a_viewable),
@@ -232,28 +275,55 @@
           
           <span v-if="r.comments_a_viewable">
 
-              <br>
+            <br>
+            
+            <div style="overflow-y: scroll; padding-top: 10px; padding-bottom: 10px; max-height: 400px; display: flex; flex-direction: column-reverse;">
 
-              <div style="padding-bottom: 10px;">
+              <span v-for="(c, index) in r.comments">
 
-                <div>Sidharth Naik: Wow great post </div> 
+                  <span v-if="index == r.comments.length - 1">
+                    <div style="padding-bottom: 20px;">
+                      <div style="padding-top: 15px;">
+                        {{c['comment_content']}}
+                      </div>
+                    </div> 
+                  </span>
 
-                <div>S N: Love this post</div>
+                  <span v-else>
+                    <div style="padding-bottom: 20px; border-top-style: solid; border-width: .5px; border-color: lightgray;">
+                      <div style="padding-top: 15px;">
+                        {{c['comment_content']}}
+                      </div>
+                    </div> 
+                  </span>
 
-              </div>  
+                  [[if email:]]
 
-              <div>
+                  <div style="float:right;">
+                    <div v-if="c['email'] === '[[=email]]'">
+                      <button @click="delete_comment(r._idx, c['id'], index)" class="button is-danger is-light">
+                        <i class="fa fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
 
-                <div style="float: left; width: 94%;">
-                  <input class="input" type="text" placeholder="Type here to enter comment">
+                  [[pass]]
+
+              </span>
+
+            </div> 
+             
+
+            [[if email:]]
+              <div style="padding-top: 20px; display: flex;">
+                <div style="flex: 20; padding-right: 10px">
+                <input v-model="r.comment" class="input" type="text" placeholder="Type here to enter comment">
                 </div>
-                <input type="submit" @click=" " value="Post" class="button is-primary">
-
+                <div style="flex: 1;">
+                  <input type="submit" @click="add_comment(r._idx)" value="Post" class="button is-primary is-light">
+                </div>
               </div>
-
-              <br>
-
-          </span>
+            [[pass]]
 
         <div style="height: 15px"></div>
 
@@ -263,7 +333,7 @@
 </div>
 </div>
 </div>
-  <div class="box" style="background-color:rgb(168, 204, 235);"> 
+  <div class="section" style=background-color:rgb(164,215,236);> 
 
     <div class="container block">
       <nav class="level">
@@ -298,7 +368,9 @@
   let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
   let search_url = "[[=XML(search_url)]]";
   let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
-
+  let get_comments_stream_url = "[[=XML(get_comments_stream_url)]]";
+  let delete_comment_url = "[[=XML(delete_comment_url)]]";
+  let add_comment_url = "[[=XML(add_comment_url)]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]

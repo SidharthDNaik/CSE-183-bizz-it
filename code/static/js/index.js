@@ -15,6 +15,7 @@ let init = (app) => {
         add_content: "",
         add_title: "",
         add_location: "",
+        add_business_name: "",
         email: "",
         is_matching: false,
         post_search:"",
@@ -26,6 +27,7 @@ let init = (app) => {
         uploaded: false,
         img_url: "",
         add_mode: false,
+        post_category: "",
     };
 
     // This is the file selected for upload.
@@ -37,6 +39,7 @@ let init = (app) => {
         a.map((e) => {e._idx = k++;});
         return a;
     };
+
 
     app.select_file = function (event) {
         // Reads the file.
@@ -119,6 +122,9 @@ let init = (app) => {
                 content: app.vue.add_content,
                 location: app.vue.add_location,
                 thumbnail: app.vue.add_thumbnail,
+                business_name: app.vue.add_business_name,
+                category: app.vue.post_category,
+                
             }).then(
                 function (response){
                     app.vue.rows.push({
@@ -126,6 +132,7 @@ let init = (app) => {
                         title: app.vue.add_title,
                         content: app.vue.add_content,
                         location: app.vue.add_location,
+                        business_name: app.vue.add_business_name,
                         thumbnail: app.vue.add_thumbnail,
                         name: response.data.name,
                         email: response.data.email,
@@ -140,6 +147,8 @@ let init = (app) => {
                     
                     app.set_post_status(false);
                     app.set_add_status(false);
+
+                    app.get_category;
                 });
     };
 
@@ -147,7 +156,9 @@ let init = (app) => {
         app.vue.add_title = "";
         app.vue.add_content = "";
         app.vue.add_location = "";
+        app.vue.add_business_name = "";
         app.vue.name = "";
+        app.vue.post_category = "";
     };
 
     app.delete_post = function(row_idx) {
@@ -174,6 +185,10 @@ let init = (app) => {
 
     app.set_post_status = function (new_status) {
         app.vue.post_mode = new_status;
+    };
+
+    app.get_category = function (category_input) {
+        app.vue.post_category = category_input;
     };
 
     app.set_likes = function(row_idx, like_type){
@@ -233,6 +248,53 @@ let init = (app) => {
         Vue.set(row, 'comments_a_viewable', !row.comments_a_viewable);
     };
 
+    app.delete_comment = function(row_idx, c_idx, cs_idx){
+        let post_id = app.vue.rows[row_idx].id;
+        axios.get(delete_comment_url,
+            {params: {
+                post_id: post_id,
+                c_idx: c_idx
+            }}
+        ).then( function (response){
+            app.vue.rows[row_idx].comments.splice(cs_idx,1);
+            app.enumerate(app.vue.rows);
+        }); 
+    };
+    
+    app.add_comment = function (row_idx) {
+        // To test lets print to see if we get the comment in the field
+        // and index
+        // increase comment count for this post
+        app.vue.rows[row_idx].number_of_comments++;
+        // get id and comment
+        let id = app.vue.rows[row_idx].id;
+        let comment = app.vue.rows[row_idx].comment;
+        
+        axios.post(
+                    add_comment_url, 
+                    {
+                        post_id: id, 
+                        comment: comment, 
+                        commenter: user_name,
+                    }
+                ).then(
+                    function (response){
+                        let row = app.vue.rows[row_idx];
+                        let rows = response.data.rows;
+                        if (typeof row.comments == 'undefined'){
+                            Vue.set(row, 'comments', []);
+                        }
+                        row.comments.unshift(rows[rows.length-1]);
+                        Vue.set(row, 'email', response.data.email);
+                        app.enumerate(app.vue.rows);
+                        app.reset_comment(row_idx);
+                    });
+    }
+
+    app.reset_comment = function (row_idx) {
+        app.vue.rows[row_idx].comment = "";
+    }
+
     // We form the dictionary of all methods, so we can assign them
     // to the Vue app in a single blow.
     app.methods = {
@@ -249,6 +311,8 @@ let init = (app) => {
         select_file: app.select_file,
         upload_file: app.upload_file,
         get_category: app.get_category,
+        add_comment: app.add_comment,
+        delete_comment: app.delete_comment,
     };
 
     // This creates the Vue instance.
@@ -292,7 +356,20 @@ let init = (app) => {
                             row.string_of_dislikes = result.data.string_of_dislikes;
                         });
                     }
+                }).then(
+                    () => {
+                        for(let row of app.vue.rows) {
+                            axios.get(get_comments_stream_url, 
+                                {params: {
+                                    "post_id": row.id,
+                                }}).then(
+                                    (result) => {
+                                        row.number_of_comments += result.data.number_of_comments;
+                                        row.comments = result.data.comments;
+                                    });
+                        }
                 });
+;
 
             // app.vue.rows = rows;
     };

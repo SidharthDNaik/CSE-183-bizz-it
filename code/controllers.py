@@ -33,10 +33,6 @@ from py4web.utils.auth import Auth
 from .models import get_user_email, get_name
 import uuid 
 import random 
-from py4web.utils.form import Form, FormStyleBulma
-from .common import Field
-import time
-from pydal.validators import *
 import time
 
 url_signer = URLSigner(session)
@@ -60,7 +56,9 @@ def index():
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
         upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
-       
+        add_comment_url = URL('add_comment', signer=url_signer),
+        get_comments_stream_url = URL('get_comments_stream', signer=url_signer),
+        delete_comment_url = URL('delete_comment', signer=url_signer),
     )
 
 # This is our very first API function.
@@ -69,20 +67,22 @@ def index():
 def load_posts():
     rows = db(db.posts).select().as_list()
     return dict(
-        rows= rows,
-        )
+        rows= rows,)
 
 @action('add_post', method='POST')
 @action.uses(auth, url_signer.verify(), db)
 def add_post():
     name = get_name()
     email = get_user_email()
-    if(request.json.get('title') != "" and request.json.get('content') != "" and request.json.get('location') != "" and request.json.get('category') != ""):
+    if(request.json.get('title') != "" and request.json.get('content') != "" 
+    and request.json.get('location') != "" and request.json.get('business_name') != "" 
+    and request.json.get('category') != ""):
         id = db.posts.insert(
             title=request.json.get('title'),
             content=request.json.get('content'),
             location=request.json.get('location'),
             category=request.json.get('category'),
+            business_name=request.json.get('business_name'),
             name=name,
             email = email,
         )
@@ -98,25 +98,6 @@ def add_post():
         db(db.posts.id == id).delete()
         return "failed to post"
 
-    # print(auth.extra_auth_user_fields)
-    # print(db.auth_user.small_business)
-
-    name = get_name()
-    email = get_user_email()
-    id = db.posts.insert(
-        title=request.json.get('title'),
-        content=request.json.get('content'),
-        location=request.json.get('location'),
-        name=name,
-        email = email,
-    )
-    return dict(
-        # smallBiz=smallBiz,
-        id=id,
-        name=name,
-        email=email,
-    )
-
 @action('delete_post')
 @action.uses(auth, url_signer.verify(), db)
 def delete_post():
@@ -124,6 +105,42 @@ def delete_post():
     assert id is not None
     db(db.posts.id == id).delete()
     return "ok"
+
+@action('delete_comment')
+@action.uses(auth, url_signer.verify(), db)
+def delete_comment():
+    post_id = request.params.get('post_id')
+    c_idx = request.params.get('c_idx')
+    assert post_id is not None
+    assert c_idx is not None
+    db(
+        (db.comments.post_id == post_id) &
+        (db.comments.id == c_idx)
+      ).delete()
+    return "ok"
+
+@action('add_comment', method='POST')
+@action.uses(auth, url_signer.verify(), db)
+def add_comment():
+    post_id = request.json.get('post_id')
+    commenter = request.json.get('commenter')
+    t_comment = request.json.get('comment')
+    assert post_id is not None and t_comment is not None
+    comment_content = commenter + ": " + t_comment
+    email = get_user_email()
+    db.comments.insert(
+        post_id = post_id,
+        commenter = commenter,
+        comment_content = comment_content,
+        email = email,
+    )
+    rows = db(
+                (db.comments.post_id == post_id)
+    ).select().as_list()
+    return dict(
+        rows=rows,
+        email = email,
+    )
 
 @action('get_likes')
 @action.uses(url_signer.verify(), db)
@@ -185,15 +202,67 @@ def get_likes_stream():
         string_of_dislikes=string_of_dislikes,
     )
 
+@action('get_comments_stream')
+@action.uses(url_signer.verify(), db)
+def get_comments_stream():
+    post_id = request.params.get('post_id')
+    commenter = request.params.get('commenter')
+    rows = db(
+                (db.comments.post_id == post_id) &
+                (db.comments.commenter != commenter)
+            ).select().as_list()
+    number_of_comments = 0
+    comments = []
+    i = 0
+    for r in rows:
+        comments.append(r)
+    return dict(
+        number_of_comments = number_of_comments,
+        comments = [ele for ele in reversed(comments)],
+    )
+
 # This controller is used to go to the explore map page
 @action('explore')
-@action.uses(auth, url_signer, 'explore.html')
+@action.uses(db, auth.user, url_signer, 'explore.html')
 def explore():
-  
+    rows = db(db.posts).select(db.posts.location).as_list()
+    businessnames = db(db.posts).select(db.posts.business_name).as_list()
+
+    locations = ""
+    googlemaps = []
+    bizznames = []
+    business_names = ""
+
+    final_dict = {}
+    for row in rows:
+        for k in row:
+            locations += row.get(k) + "!"
+            googlemaps.append(row.get(k))
+
+    for r in businessnames:
+        for i in r:
+            # print(r.get(i))
+            bizznames.append(r.get(i))
+            business_names += r.get(i) + "!"
+    
+    for name, maps in zip(bizznames, googlemaps):
+        # print(name, maps)
+        final_dict[name] = maps
+
+    # print(final_dict)
+
+    
     return dict(
         # This is the signed URL for the callback.
         email=get_user_email(),
+        businessnames=businessnames,
+        business_names=business_names,
+        final_dict=final_dict,
+        bizznames=bizznames,
+        googlemaps=googlemaps,
         name=get_name(),
+        locations=locations,
+        rows=rows,
     )
 
 # This controller is used to initialize the database.
@@ -237,7 +306,9 @@ def search():
     if t:
         tt = t.strip()
         
-        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)))
+        q = ((db.posts.name.contains(tt)) | (db.posts.content.contains(tt)) | 
+        (db.posts.title.contains(tt)) | (db.posts.location.contains(tt)) | 
+        (db.posts.business_name.contains(tt)) | (db.posts.category.contains(tt)))
         
     else: 
         q = db.posts.id > 0
@@ -245,6 +316,8 @@ def search():
     rows = db(q).select().as_list()
     return dict(rows=rows)
     
+
+
 @action('upload_thumbnail', method="POST")
 @action.uses(auth, url_signer.verify(), db)
 def upload_thumbnail():
