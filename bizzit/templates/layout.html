@@ -25,12 +25,28 @@
             <div class="navbar">
               <a class="navbar-item is-active" href="[[=URL('index')]]">Feed</a>
               <a class="navbar-item" href="[[=URL('explore')]]">Explore Map</a>
-              <a class="navbar-item" href="[[=URL('profile')]]">User Profile</a>
+              <a class="navbar-item" href="[[=URL('profile')]]">My Posts</a>
               <a class="navbar-item" href="[[=URL('about')]]">About Bizzit</a>
 
             </div>
           </div>
           <div class="navbar-end">
+
+          [[if globals().get('user'):]]
+            <div class="navbar-item">
+              <p>[[=globals().get('user').get('email')]]</p>
+            </div>
+          [[pass]]
+          <div class="navbar-item">
+            <div class="buttons">
+              [[if globals().get('user'):]]
+              <a class="button has-background-success-light is-info is-outlined is-rounded" href="[[=URL('auth/logout')]]">Sign out</a>
+              [[else:]]
+              <a class="button has-background-info-light is-link is-outlined is-rounded" href="[[=URL('auth/plugin/oauth2google/login', vars=dict(next='../../../'))]]">Sign In</a>
+              [[pass]]
+            </div>
+          </div>
+            <!--
             <div class="navbar-item">
               <div class="buttons">
                 [[if globals().get('user'):]]
@@ -51,6 +67,8 @@
                 [[pass]]
               </div>
             </div>
+            -->
+
           </div>
         </div>
       </nav>
