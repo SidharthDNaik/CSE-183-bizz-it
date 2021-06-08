@@ -110,7 +110,15 @@ let init = (app) => {
 
     app.commentable = (a) => {
         a.map((e) => {
+            // The toggle to show the comments
             Vue.set(e, 'comments_a_viewable', false);
+            // number of comments
+            Vue.set(e, 'number_of_comments', 0);
+            // This is the comment we want to add from
+            // input
+            Vue.set(e, 'comment', "");
+            // This is the string of comments that will be displayed
+            Vue.set(e, 'comments', []);
         });
         return a;
     };
@@ -189,6 +197,14 @@ let init = (app) => {
 
     app.get_category = function (category_input) {
         app.vue.post_category = category_input;
+    };
+
+    app.sort_by_category = function (sort_category_input) {
+        let search_cat = sort_category_input
+        axios.get(search_url, {params: {q: search_cat}})
+        .then(function (result){
+            app.vue.rows = app.enumerate(result.data.rows);
+        });
     };
 
     app.set_likes = function(row_idx, like_type){
@@ -285,7 +301,6 @@ let init = (app) => {
                             Vue.set(row, 'comments', []);
                         }
                         row.comments.unshift(rows[rows.length-1]);
-                        Vue.set(row, 'email', response.data.email);
                         app.enumerate(app.vue.rows);
                         app.reset_comment(row_idx);
                     });
@@ -313,6 +328,7 @@ let init = (app) => {
         get_category: app.get_category,
         add_comment: app.add_comment,
         delete_comment: app.delete_comment,
+        sort_by_category: app.sort_by_category,
     };
 
     // This creates the Vue instance.

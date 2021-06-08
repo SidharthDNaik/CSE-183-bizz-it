@@ -35,13 +35,21 @@ for item in settings.LOGGERS:
 # #######################################################
 # connect to db
 # #######################################################
-db = DAL(
-    settings.DB_URI,
-    folder=settings.DB_FOLDER,
-    pool_size=settings.DB_POOL_SIZE,
-    migrate=settings.DB_MIGRATE,
-    fake_migrate=settings.DB_FAKE_MIGRATE,
-)
+if os.environ.get("GAE_ENV"):
+    db = DAL(
+        settings.CLOUD_DB_URI,
+        pool_size=settings.CLOUD_DB_POOL_SIZE,
+        migrate=settings.CLOUD_DB_MIGRATE,
+        fake_migrate=settings.CLOUD_DB_FAKE_MIGRATE,
+    )
+else: 
+    db = DAL(
+        settings.DB_URI,
+        folder=settings.DB_FOLDER,
+        pool_size=settings.DB_POOL_SIZE,
+        migrate=settings.DB_MIGRATE,
+        fake_migrate=settings.DB_FAKE_MIGRATE,
+    )
 
 # #######################################################
 # define global objects that may or may not be used by the actions
@@ -81,7 +89,7 @@ elif settings.SESSION_TYPE == "database":
 # Instantiate the object and actions that handle auth
 # #######################################################
 
-auth = Auth(session, db, define_tables=False, extra_fields=[Field('small_business', 'boolean')])
+auth = Auth(session, db, define_tables=False)
 
 # Fixes the messages.
 auth_messages = copy.deepcopy(auth.MESSAGES)
@@ -178,11 +186,11 @@ if settings.OAUTH2OKTA_CLIENT_ID:
 # Define a convenience action to allow users to download
 # files uploaded and reference by Field(type='upload')
 # #######################################################
-if settings.UPLOAD_FOLDER:
-    @action('download/<filename>')
-    @action.uses(db)
-    def download(filename):
-        return downloader(db, settings.UPLOAD_FOLDER, filename)
+#if settings.UPLOAD_FOLDER:
+#    @action('download/<filename>')
+#    @action.uses(db)
+#    def download(filename):
+#        return downloader(db, settings.UPLOAD_FOLDER, filename)
     # To take advantage of this in Form(s)
     # for every field of type upload you MUST specify:
     #

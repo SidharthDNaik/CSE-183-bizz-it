@@ -19,7 +19,7 @@
               <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
            </figure>
            <div class="section">
-            <h2 class="title is-size-1">[[=name]]'s Profile</h2>
+            <h2 class="title is-size-1">[[=name]]'s Posts</h2>
           </div>
           </div>
        </nav>
@@ -33,18 +33,47 @@
     <div class="columns block">
       <div class="column">
         <p class="control has-icons-right">
-          <input class="input" type="text" v-model="post_search" placeholder="Search my posts" @keyup="search"/>
+          <input class="input" type="text" v-model="post_search" placeholder="Search posts" @keyup="search"/>
           <span class="icon is-small is-right">
             <i class="fa fa-search"></i>
           </span>
         </p>
       </div>
       <div class="column is-narrow">
-        <button class="button is-warning" @click="clear_search">
+        <button class="button is-warning " @click="clear_search">
           <span class="icon is-small"><i class="fa fa-times-circle"></i></span>
         </button>
       </div>
     </div>
+    <div class="columns">
+        <div class="column">
+          <button @click="sort_by_category('Restaurants')" class="button is-info is-light is-outlined">Restaurants</button>
+        </div>
+        <div class="column">
+          <button @click="sort_by_category('Bakeries')" class="button is-info is-light is-outlined">Bakeries</button>
+        </div>
+        <div class="column">
+          <button @click="sort_by_category('Clothing')" class="button is-info is-light is-outlined">Clothing</button>
+        </div>
+        <div class="column">
+          <button @click="sort_by_category('Art')" class="button is-info is-light is-outlined">Art</button>
+        </div>
+        <div class="column">
+          <button @click="sort_by_category('Home')" class="button is-info is-light is-outlined">Home</button>
+        </div>
+        <div class="column">
+          <button @click="sort_by_category('Beauty')" class="button is-info is-light is-outlined">Beauty</button>
+        </div>
+        <div class="column">
+          <button @click="sort_by_category('Services')" class="button is-info is-light is-outlined">Services</button>
+        </div>
+        <div class="column">
+          <button @click="sort_by_category('Other')" class="button is-info is-light is-outlined">Other</button>
+        </div>
+        <div class="column">
+          <button class="button is-warning" @click="clear_search">Clear</button>
+        </div>
+      </div>
   </div>
   <div class="container block">
     <table class="table is-striped is-fullwidth">
@@ -54,157 +83,208 @@
       <div v-for="p in posts_list" class="box">{{p}}
       <div v-for="r in rows.slice().reverse()" class="box">
       -->
-      <div v-for="r in rows.slice().reverse()" v-if="r.email === '[[=email]]'" class="box" style="background-color:rgb(235, 242, 247);">
-        <div class="content is-medium">
-          <p>
-            {{r.name}}
-          </p>
-        </div>
-        <div class="content is-small">
-          <p>
-            {{r.location}}
-          </p>
-        </div>
-        <div class="title">
-          <p>
-            {{r.title}}
-          </p>
-        </div>
-        
-        <div style="float:right;">
-          <div v-if="r.email === '[[=email]]'">
-            <div v-if="!r.thumbnail">
-              <p class="control">
-                <div class="file is-info">
-                  <label class="file-label">
-                    <input class="file-input" type="file"
-                           accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
-                           @change="upload_file($event, r._idx)">
-                    <span class="file-cta">
-                      <span class="file-label">
-                        <span><i class="fa fa-upload"></i></span>
-                      </span>
-                    </span>
-                  </label>
-                </div>
-              </p>
-            </div>
-  
-          </div>
-        
-        </div>
-
-        <div class="container has-text-centered">
-          <div class="content">
-            <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
-          </div>
-        </div>
-        
-        <div class="content is-medium">
-            <p>
-              {{r.content}}
-            </p>
-          </div>
-          
-          <div class="content is-small">
-            <p>
-              {{r.category}}
-            </p>
-          </div>
-
-          <div style="float:right;">
-            <div v-if="r.email === '[[=email]]'">
-
-              
-              <button @click="delete_post(r._idx)" class="button is-danger">
-                <i class="fa fa-trash"></i>
-              </button>
-              
-            </div>
-          </div>
-        </span>
-          <div stlye="padding-bottom: 5px">
-            <!-- if email you can like -->
-            [[if email:]]
-
-              <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
-
-                  <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 1)">
-                      <i class="fa fa-flip-horizontal" :class="{
-                          'fa-heart-o': !(r.like_type === 1),
-                          'fa-heart': (r.like_type === 1),
-                          }">
-                      </i>
-                  </span>
-
-              </span>
-            <!-- Cannot like -->
-            [[else:]]
-
-              <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
-  
-                    <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)">
-                      <i class="fa fa-heart-o"></i>
-                    </span>
-  
-              </span>
+     
+    <div v-for="r in rows.slice().reverse()" v-if="r.email === '[[=email]]'" class="box" style="background-color:rgb(235, 242, 247);">
+      <!-- <div class=level>  -->
+       <div class="content">
+         <strong class="is-size-5">
+           {{r.business_name }}              
+         </strong>
+         <small class="is-size-7">
+           Posted by {{r.name}}
+         </small>
+         <div class="container" style="white-space:nowrap">
+             <img class="image is-16x16" style="display:inline;" src="https://i.postimg.cc/JnV4b4dS/black-pin.png"/>
             
-            [[pass]]
-            <!-- toggle comments -->
-              <span @click="toggle_comments(r._idx)" class="icon has-text-danger">
-                <i class="fa " :class="{
-                  'fa-comment-o': !(r.comments_a_viewable),
-                  'fa-comment': (r.comments_a_viewable),
-                  }">
-                </i>
-              </span>
+           <div style="display:inline; white-space:nowrap;"> 
+             {{r.location}}
 
-          </div>
+           </div>
+       
+         </div>
+       </div>
+     <div class="horizontal-line" style="border-bottom: 1px solid #e3e3e3;"></div>
 
-          <span v-if="r.hover && r.number_of_likes > 0">
-              <br>
-              <span style="color:crimson" v-if="r.number_of_likes > 0">
-                  Liked by<span v-if="r.like_type === 1"> [[=name]]<span v-if="r.number_of_likes != 1">,</span></span> 
-                  <span v-for="(l, index) in r.likes">
-                    <span v-if="index === r.likes.length - 1 "> 
-                      {{l}}
-                    </span>
-                    <span v-else> 
-                      {{l}}<span>, </span>
-                    </span>
-                  </span>
-              </span>
-              <br>
-          </span>
+     <div class="container has-text-centered">
+       <div class="title pt-3 pb-3">
+         <p>
+           {{r.title}}
+         </p>
+       </div>
+     </div>
+
+     <div class="container has-text-centered">
+       <div class="content">
+         <img v-if="r.thumbnail"  width="500" :src="r.thumbnail" />
+       </div>
+       <!-- <div class="content is-medium pt-2">
+         <p>
+           {{r.content}}
+         </p>
+       </div> -->
+     </div>
+     
+     
+       
+       <span class="tag is-warning is-rounded is-medium is-light is-outlined">{{r.category}}</span>
+       <br></br>
+
+   
+
+     
+         <div v-if="r.email === '[[=email]]'">
+           <div v-if="!r.thumbnail">
+             <p class="control">
+               <div class="file is-info pb-3">
+                 <label class="file-label">
+                   <input class="file-input" type="file"
+                          accept=".jpg, .png, .jpeg, .gif, .bmp, .tif, .tiff|image/*"
+                          @change="upload_file($event, r._idx)">
+                   <span class="file-cta">
+                     <span class="file-label">
+                       <span> 
+                         <i class="fa fa-upload" ></i>
+                       </span>
+                     </span>
+                   </span>
+                 </label>
+               </div>
+             </p>
+           </div>
+ 
+         </div>
+
+     </span>
+       <div stlye="padding-bottom: 5px">
+         <!-- if email you can like -->
+         [[if email:]]
+
+           <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
+
+               <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)" @click="set_likes(r._idx, 1)">
+                   <i class="fa fa-flip-horizontal" :class="{
+                       'fa-heart-o': !(r.like_type === 1),
+                       'fa-heart': (r.like_type === 1),
+                       }">
+                   </i>
+               </span>
+
+           </span>
+         <!-- Cannot like -->
+         [[else:]]
+
+           <span @mouseout="set_hover(r._idx, false)" class="has-text-info">
+
+                 <span class="icon has-text-danger" @mouseover="set_hover(r._idx, true)">
+                   <i class="fa fa-heart-o"></i>
+                 </span>
+
+           </span>
+         
+         [[pass]]
+         <!-- toggle comments -->
+         
+           <span @click="toggle_comments(r._idx)" class="icon has-text-danger is-light">
+             <i class="fa " :class="{
+               'fa-comment-o': !(r.comments_a_viewable),
+               'fa-comment': (r.comments_a_viewable),
+               }">
+             </i>
+           </span>
+
+       </div>
+
+       <span v-if="r.hover && r.number_of_likes > 0">
+           <br>
+           <span style="color:crimson" v-if="r.number_of_likes > 0">
+               Liked by<span v-if="r.like_type === 1"> [[=name]]<span v-if="r.number_of_likes != 1">,</span></span> 
+               <span v-for="(l, index) in r.likes">
+                 <span v-if="index === r.likes.length - 1 "> 
+                   {{l}}
+                 </span>
+                 <span v-else> 
+                   {{l}}<span>, </span>
+                 </span>
+               </span>
+           </span>
+           <br>
+       </span>
+       
+       <div style="float:right;">
+         <div v-if="r.email === '[[=email]]'">
+           <button @click="delete_post(r._idx)" class="button is-warning">
+             Delete Post
+           </button>
+         </div>
+       </div>
+       
+       <div class="content is-size-6 pt-2">
+         <p>
+           {{r.content}}
+         </p>
+       </div>
+       <!-- <div>
+         <div v-if="r.email === '[[=email]]'">
+           <button @click="delete_post(r._idx)" class="button is-warning">
+             Delete Post
+           </button>
+         
+         </div>
+       </div> -->
+       
+       <span v-if="r.comments_a_viewable">
+         <div style="overflow-y: scroll; padding-top: 10px; padding-bottom: 10px; max-height: 400px; display: flex; flex-direction: column-reverse;">
+
+           <span v-for="(c, index) in r.comments">
+
+               <span v-if="index == r.comments.length - 1">
+                   <div style="padding-top: 15px;">
+                     {{c['comment_content']}}
+                   </div>
+               </span>
+
+             
+               <span v-else>
+                 <div style="border-top-style: solid; border-width: .5px; border-color: lightgray;">
+                   <div style="padding-top: 15px;">
+                     {{c['comment_content']}}
+                   </div>
+                 </div> 
+               </span>
+
+               [[if email:]]
+
+               <div style="float:right;">
+                 <div v-if="c['email'] === '[[=email]]'">
+                   <span class="icon has-text-danger pb-5" 
+                   @click="delete_comment(r._idx, c['id'], index)">
+                     <i class="fa fa-fw fa-trash"></i>
+                   </span>
+
+                 </div>
+               </div>
+
+               [[pass]]
+
+           </span>
+
+         </div> 
           
-          <span v-if="r.comments_a_viewable">
 
-              <br>
+         [[if email:]]
+           <div style="padding-top: 20px; display: flex;">
+             <div style="flex: 20; padding-right: 10px">
+             <input v-model="r.comment" class="input" type="text" placeholder="Type here to enter comment">
+             </div>
+             <div style="flex: 1;">
+               <input type="submit" @click="add_comment(r._idx)" value="Post" class="button" style="background-color:rgb(181, 228, 245);">
+             </div>
+           </div>
+         [[pass]]
 
-              <div style="padding-bottom: 10px;">
+     <div style="height: 15px"></div>
 
-                <div>Sidharth Naik: Wow great post </div> 
-
-                <div>S N: Love this post</div>
-
-              </div>  
-
-              <div>
-
-                <div style="float: left; width: 94%;">
-                  <input class="input" type="text" placeholder="Type here to enter comment">
-                </div>
-                <input type="submit" @click=" " value="Post" class="button is-primary">
-
-              </div>
-
-              <br>
-
-          </span>
-
-        <div style="height: 15px"></div>
-
-      </div>
+    </div>
     </table>
   </div>
   
@@ -247,6 +327,9 @@
   let get_likes_stream_url = "[[=XML(get_likes_stream_url)]]";
   let search_url = "[[=XML(search_url)]]";
   let upload_thumbnail_url = "[[=XML(upload_thumbnail_url)]]";
+  let get_comments_stream_url = "[[=XML(get_comments_stream_url)]]";
+  let delete_comment_url = "[[=XML(delete_comment_url)]]";
+  let add_comment_url = "[[=XML(add_comment_url)]]";
 </script>
 <script src="js/index.js"></script>
 [[end]]

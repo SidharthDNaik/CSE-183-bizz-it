@@ -223,7 +223,7 @@ def get_comments_stream():
 
 # This controller is used to go to the explore map page
 @action('explore')
-@action.uses(db, auth.user, url_signer, 'explore.html')
+@action.uses(db, auth, url_signer, 'explore.html')
 def explore():
     rows = db(db.posts).select(db.posts.location).as_list()
     businessnames = db(db.posts).select(db.posts.business_name).as_list()
@@ -284,7 +284,9 @@ def profile():
         delete_post_url = URL('delete_post', signer=url_signer),
         search_url = URL('search', signer=url_signer),
         upload_thumbnail_url = URL('upload_thumbnail', signer=url_signer),
-        
+        add_comment_url = URL('add_comment', signer=url_signer),
+        get_comments_stream_url = URL('get_comments_stream', signer=url_signer),
+        delete_comment_url = URL('delete_comment', signer=url_signer),
 
     ) 
 
