@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <base href="[[=URL('static')]]/">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="data:image/x-icon;base64,AAABAAEAAQEAAAEAIAAwAAAAFgAAACgAAAABAAAAAgAAAAEAIAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAPAAAAAA=="/>
+    <link rel="stylesheet" href="css/bulma.css">
+    <link rel="stylesheet" href="font-awesome-4.7.0/css/font-awesome.css">
+    [[block page_head]]<!-- individual pages can customize header here -->[[end]]
+  </head>
+  <section class="hero is-warning is-small">
+    <!-- Hero head: will stick at the top -->
+    <div class="hero-head">
+      <nav class="navbar is-fixed-top" style="background-color: rgb(255, 221, 87);">
+        <div class="container">
+          <div class="navbar-brand">
+            <a class="navbar-item">
+              <img src="https://i.postimg.cc/XY6sW68v/Bizzit-Logo.png">
+              <img src="https://i.postimg.cc/brBpn8rM/BIZZIT-LOGO.png" alt="Logo">
+            </a>
+            
+          </div>
+          <div id="navbarMenuHeroA" class="navbar-menu">
+            <div class="navbar">
+              <a class="navbar-item is-active" href="[[=URL('index')]]">Feed</a>
+              <a class="navbar-item" href="[[=URL('explore')]]">Explore Map</a>
+              <a class="navbar-item" href="[[=URL('profile')]]">My Posts</a>
+              <a class="navbar-item" href="[[=URL('about')]]">About Bizzit</a>
+
+            </div>
+          </div>
+          <div class="navbar-end">
+
+          [[if globals().get('user'):]]
+            <div class="navbar-item">
+              <p>[[=globals().get('user').get('email')]]</p>
+            </div>
+          [[pass]]
+          <div class="navbar-item">
+            <div class="buttons">
+              [[if globals().get('user'):]]
+              <a class="button has-background-success-light is-info is-outlined is-rounded" href="[[=URL('auth/logout')]]">Sign out</a>
+              [[else:]]
+              <a class="button has-background-info-light is-link is-outlined is-rounded" href="[[=URL('auth/plugin/oauth2google/login', vars=dict(next='../../../'))]]">Sign In</a>
+              [[pass]]
+            </div>
+          </div>
+          </div>
+        </div>
+      </nav>
+    </div>
+  
+    <!-- Hero content: will be in the middle -->
+    <div class="hero-body pt-6">
+      <div class="container has-text-centered pt-6">
+            <img src="https://i.postimg.cc/brBpn8rM/BIZZIT-LOGO.png" alt="Logo">
+        <p class="subtitle is-size-5">
+          A place for small businesses to grow.
+        </p>   
+      </div>
+    </div>
+  </section>
+  <body>
+  
+    
+
+
+    <!-- beginning of HTML inserted by extending template -->
+    [[include]]
+    <!-- end of HTML inserted by extending template -->
+    <footer class="footer">
+      <div class="content has-text-centered">
+        Made with <a href="https://py4web.com">py4web</a>.
+        <a href="https://learn-py4web.github.io">Learn py4web!</a>
+      </div>
+    </footer>
+  </body>
+  <script src="js/sugar.min.js"></script>
+  <script src="js/axios.min.js"></script>
+  <script src="js/vue.js"></script>
+  <script src="js/utils.js"></script>
+  [[block page_scripts]]<!-- individual pages can add scripts here -->[[end]]
+</html>
